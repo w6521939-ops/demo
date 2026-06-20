@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI整活生成器</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(135deg, #0a0e1a 0%, #1a0a2e 30%, #0d1b2a 60%, #1a0a2e 100%);
+      background-size: 400% 400%;
+      animation: gradient-shift 15s ease infinite;
+      color: #e8ecf4;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    @keyframes gradient-shift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* 背景光效 - 极光 */
+    .bg-aurora {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .aurora-1 {
+      position: absolute;
+      width: 800px;
+      height: 500px;
+      left: -200px;
+      top: -100px;
+      background: radial-gradient(ellipse, rgba(0, 217, 163, 0.2), transparent 70%);
+      filter: blur(80px);
+      animation: aurora-move 10s ease-in-out infinite;
+    }
+
+    .aurora-2 {
+      position: absolute;
+      width: 600px;
+      height: 400px;
+      right: -100px;
+      top: 50px;
+      background: radial-gradient(ellipse, rgba(138, 43, 226, 0.15), transparent 70%);
+      filter: blur(60px);
+      animation: aurora-move 12s ease-in-out infinite reverse;
+    }
+
+    .aurora-3 {
+      position: absolute;
+      width: 500px;
+      height: 400px;
+      left: 20%;
+      bottom: -50px;
+      background: radial-gradient(ellipse, rgba(0, 180, 216, 0.12), transparent 70%);
+      filter: blur(60px);
+      animation: aurora-move 14s ease-in-out infinite;
+    }
+
+    .aurora-4 {
+      position: absolute;
+      width: 400px;
+      height: 300px;
+      right: 20%;
+      top: 40%;
+      background: radial-gradient(ellipse, rgba(255, 0, 128, 0.08), transparent 70%);
+      filter: blur(50px);
+      animation: aurora-move 16s ease-in-out infinite;
+    }
+
+    @keyframes aurora-move {
+      0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+      25% { transform: translate(40px, -30px) rotate(5deg) scale(1.1); }
+      50% { transform: translate(-30px, 20px) rotate(-3deg) scale(0.95); }
+      75% { transform: translate(20px, 40px) rotate(2deg) scale(1.05); }
+    }
+
+    /* 星星装饰 */
+    .star-deco {
+      position: absolute;
+      color: #00d9a3;
+      font-size: 16px;
+      animation: twinkle 2s ease-in-out infinite;
+    }
+
+    .star-deco.s1 { top: 80px; left: 45%; animation-delay: 0s; }
+    .star-deco.s2 { top: 120px; left: 50%; font-size: 12px; animation-delay: 0.5s; }
+    .star-deco.s3 { top: 60px; left: 55%; font-size: 10px; animation-delay: 1s; }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.3); }
+    }
+
+    /* 主容器 */
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 48px;
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    /* 左侧 */
+    .left-section {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    /* 标签 */
+    .tag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 13px;
+      width: fit-content;
+    }
+
+    .tag-badge .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #00d9a3;
+      box-shadow: 0 0 10px rgba(0, 217, 163, 0.5);
+    }
+
+    /* 标题 */
+    .main-title {
+      font-size: 52px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-top: 8px;
+      position: relative;
+    }
+
+    .main-title .gradient-text {
+      background: linear-gradient(135deg, #ffffff 30%, #00d9a3 70%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .title-deco {
+      position: absolute;
+      right: -20px;
+      top: 0;
+      color: #00d9a3;
+      font-size: 20px;
+      animation: twinkle 2s ease-in-out infinite;
+    }
+
+    /* 副标题 */
+    .sub-title {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1.5;
+      margin-top: 8px;
+    }
+
+    .sub-title .accent {
+      color: #00d9a3;
+      font-weight: 700;
+    }
+
+    /* 描述 */
+    .desc {
+      font-size: 14px;
+      line-height: 1.8;
+      color: rgba(255, 255, 255, 0.5);
+      max-width: 320px;
+    }
+
+    /* 步骤卡片 */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .step-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 20px 16px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .step-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .step-num {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      font-size: 28px;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.04);
+      line-height: 1;
+    }
+
+    .step-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+
+    .step-icon.green {
+      background: rgba(0, 217, 163, 0.15);
+    }
+
+    .step-icon.purple {
+      background: rgba(123, 45, 142, 0.15);
+    }
+
+    .step-icon.blue {
+      background: rgba(0, 180, 216, 0.15);
+    }
+
+    .step-card h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .step-card p {
+      font-size: 12px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    /* 引言 */
+    .quote-section {
+      margin-top: 16px;
+      position: relative;
+      padding-left: 20px;
+    }
+
+    .quote-mark {
+      font-size: 48px;
+      color: rgba(0, 217, 163, 0.3);
+      line-height: 1;
+      position: absolute;
+      left: 0;
+      top: -8px;
+    }
+
+    .quote-text {
+      font-size: 14px;
+      line-height: 1.8;
+      color: rgba(255, 255, 255, 0.5);
+      padding-left: 16px;
+    }
+
+    .quote-line {
+      width: 40px;
+      height: 2px;
+      background: linear-gradient(90deg, #00d9a3, transparent);
+      margin-top: 12px;
+      margin-left: 16px;
+      border-radius: 2px;
+    }
+
+    /* 右侧 */
+    .right-section {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* 玻璃卡片 */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    /* 卡片头部 */
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .card-header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .card-header-icon {
+      font-size: 18px;
+    }
+
+    .card-action {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 6px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .card-action:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    /* 输入框 */
+    .input-area {
+      position: relative;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .input-area:focus-within {
+      border-color: rgba(0, 217, 163, 0.4);
+      box-shadow: 0 0 0 3px rgba(0, 217, 163, 0.08);
+    }
+
+    .input-area textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: #e8ecf4;
+      font-size: 15px;
+      line-height: 1.6;
+      resize: none;
+      outline: none;
+      min-height: 60px;
+      font-family: inherit;
+    }
+
+    .input-area textarea::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    .input-counter {
+      text-align: right;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+      margin-top: 8px;
+    }
+
+    /* 选择器 */
+    .selectors-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .select-field label {
+      display: block;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 6px;
+    }
+
+    .select-field select {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: #e8ecf4;
+      font-size: 14px;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(255,255,255,0.4)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+      transition: all 0.2s ease;
+    }
+
+    .select-field select:focus {
+      border-color: rgba(0, 217, 163, 0.3);
+    }
+
+    /* 生成按钮 */
+    .generate-btn {
+      width: 100%;
+      margin-top: 16px;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #00d9a3, #00b4d8);
+      color: #0a0e1a;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0, 217, 163, 0.3);
+    }
+
+    .generate-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 28px rgba(0, 217, 163, 0.4);
+    }
+
+    .generate-btn:active {
+      transform: translateY(0);
+    }
+
+    .generate-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* 次要按钮 */
+    .secondary-actions {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 14px;
+    }
+
+    .secondary-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.5);
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .secondary-btn:hover {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* 结果区域 */
+    .result-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #00d9a3;
+    }
+
+    /* 结果内容 - 上下横排布局 */
+    .result-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .result-block {
+      background: rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 14px;
+      padding: 16px;
+      width: 100%;
+    }
+
+    .result-block-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .result-block-content {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #e8ecf4;
+    }
+
+    .result-block-content .highlight {
+      color: #00d9a3;
+      font-weight: 600;
+    }
+
+    /* 标签 */
+    .tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .tag-item {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      transition: all 0.2s ease;
+    }
+
+    .tag-item.active {
+      background: rgba(0, 217, 163, 0.1);
+      border-color: rgba(0, 217, 163, 0.2);
+      color: #00d9a3;
+    }
+
+    /* 底部 */
+    .result-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .footer-note {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .copy-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #e8ecf4;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    /* 加载 */
+    .loading-overlay {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 60px 20px;
+    }
+
+    .loading-overlay.active {
+      display: flex;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255, 255, 255, 0.08);
+      border-top-color: #00d9a3;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 14px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: linear-gradient(135deg, #00d9a3, #00b4d8);
+      color: #0a0e1a;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      z-index: 1000;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 8px 32px rgba(0, 217, 163, 0.3);
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* 响应式 */
+    @media (max-width: 1024px) {
+      .container {
+        grid-template-columns: 1fr;
+        max-width: 900px;
+        padding: 32px;
+      }
+      .steps-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 20px 16px;
+      }
+      .main-title {
+        font-size: 36px;
+      }
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+      .selectors-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 背景光效 -->
+  <div class="bg-aurora">
+    <div class="aurora-1"></div>
+    <div class="aurora-2"></div>
+    <div class="aurora-3"></div>
+    <div class="aurora-4"></div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <div class="container">
+    <!-- 左侧 -->
+    <div class="left-section">
+      <div>
+        <div class="tag-badge">
+          <span class="dot"></span>
+          <span>TRAE 报名演示 / 生活娱乐赛道</span>
+        </div>
+
+        <div style="position: relative;">
+          <h1 class="main-title">
+            <span class="gradient-text">AI整活生成器</span>
+          </h1>
+          <span class="title-deco">✦</span>
+          <span class="star-deco s1">✦</span>
+          <span class="star-deco s2">✦</span>
+          <span class="star-deco s3">✦</span>
+        </div>
+
+        <p class="sub-title">
+          把普通需求变成<br>
+          <span class="accent">一本正经胡说八道</span>
+        </p>
+
+        <p class="desc">
+          输入一句话，AI 自动生成报名帖、朋友圈文案、海报文案、小剧场脚本等离谱但合理的内容。
+        </p>
+      </div>
+
+      <!-- 步骤 -->
+      <div class="steps-grid">
+        <div class="step-card">
+          <span class="step-num">01</span>
+          <div class="step-icon green">✏️</div>
+          <h4>输入普通想法</h4>
+          <p>一句话描述你的需求<br>越普通越好</p>
+        </div>
+        <div class="step-card">
+          <span class="step-num">02</span>
+          <div class="step-icon purple">✨</div>
+          <h4>AI 自动整活</h4>
+          <p>AI 一本正经胡说八道<br>生成完整内容</p>
+        </div>
+        <div class="step-card">
+          <span class="step-num">03</span>
+          <div class="step-icon blue">📋</div>
+          <h4>生成可直接发布</h4>
+          <p>内容完整，可直接<br>复制使用</p>
+        </div>
+      </div>
+
+      <!-- 引言 -->
+      <div class="quote-section">
+        <span class="quote-mark">"</span>
+        <p class="quote-text">
+          不是所有灵感都要严肃，<br>
+          有些想法，AI 帮你一本正经地胡说八道。
+        </p>
+        <div class="quote-line"></div>
+      </div>
+    </div>
+
+    <!-- 右侧 -->
+    <div class="right-section">
+      <!-- 输入卡片 -->
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-header-title">
+            <span class="card-header-icon">✨</span>
+            <span>今天想整什么活？</span>
+          </div>
+          <button class="card-action" id="useExample">
+            <span>⟲</span>
+            <span>使用示例</span>
+          </button>
+        </div>
+
+        <div class="input-area">
+          <textarea id="brief" placeholder="输入一句话，比如：想写一条请假理由，或者报名一个离谱比赛...">想写一条请假理由，让老板无法拒绝但又觉得哪里不对</textarea>
+          <div class="input-counter"><span id="charCount">0</span> / 200</div>
+        </div>
+
+        <div class="selectors-row">
+          <div class="select-field">
+            <label>整活风格</label>
+            <select id="style">
+              <option value="一本正经胡说八道">一本正经胡说八道</option>
+              <option value="假正经">假正经</option>
+              <option value="离谱中带合理">离谱中带合理</option>
+              <option value="社交发疯">社交发疯</option>
+            </select>
+          </div>
+          <div class="select-field">
+            <label>输出场景</label>
+            <select id="scene">
+              <option value="报名帖补充">报名帖补充</option>
+              <option value="朋友圈文案">朋友圈文案</option>
+              <option value="海报宣传语">海报宣传语</option>
+              <option value="短视频脚本">短视频脚本</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="generate-btn" id="generate">
+          <span>✦</span>
+          <span>立即生成整活文案</span>
+        </button>
+
+        <div class="secondary-actions">
+          <button class="secondary-btn" id="randomize">
+            <span>⟲</span>
+            <span>换个灵感</span>
+          </button>
+          <button class="secondary-btn" id="copy">
+            <span>📋</span>
+            <span>复制结果</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 结果卡片 -->
+      <div class="glass-card" id="resultCard">
+        <div class="card-header">
+          <div class="card-header-title">
+            <span class="card-header-icon">✨</span>
+            <span>AI 生成结果</span>
+          </div>
+          <div class="result-status">
+            <span>✦</span>
+            <span>已为你生成一份整活文案</span>
+          </div>
+        </div>
+
+        <!-- 加载 -->
+        <div class="loading-overlay" id="loading">
+          <div class="loading-spinner"></div>
+          <div class="loading-text">AI 正在整活中...</div>
+        </div>
+
+        <!-- 结果内容 -->
+        <div id="resultContent">
+          <div class="result-grid">
+            <!-- 第一行：标题 + 标签 -->
+            <div class="result-block">
+              <div class="result-block-label">☑ 标题</div>
+              <div class="result-block-content" id="title">
+                当"<span class="highlight">想写一条请假理由</span>"遇上 AI 整活：一份请假理由创作报告
+              </div>
+            </div>
+
+            <!-- 第二行：标签 -->
+            <div class="result-block">
+              <div class="result-block-label">☑ 标签</div>
+              <div class="tags-row" id="tagsContainer">
+                <span class="tag-item active">请假理由</span>
+                <span class="tag-item">一本正经胡说八道</span>
+                <span class="tag-item">离谱</span>
+                <span class="tag-item">搞笑</span>
+              </div>
+            </div>
+
+            <!-- 第三行：正文内容 -->
+            <div class="result-block">
+              <div class="result-block-label">☑ 正文内容</div>
+              <div class="result-block-content" id="copyText">
+                在本次「请假理由创作研究」项目中，我们以「如何让请假理由显得合理又离谱」为核心课题，进行了深度探索与实践。<br><br>
+                通过对人类请假心理的分析与 AI 离谱思维的结合，我们提出了一套全新的请假理由生成模型。<br><br>
+                该模型不仅考虑了老板的心理承受能力，还兼顾了请假者的演技水平，最终生成了一系列合理中带着离谱、离谱中透着真诚的请假理由。
+              </div>
+            </div>
+          </div>
+
+          <div class="result-footer">
+            <div class="footer-note">
+              <span>🤖</span>
+              <span>内容由 AI 生成，仅供娱乐，请勿当真</span>
+            </div>
+            <button class="copy-btn" id="copyFull">
+              <span>📋</span>
+              <span>复制全文</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 配置
+    const API_KEY = '5f721e4db9e14c94a9ceb803a8b8784f.mUQvV2XsrUERYOn2';
+    const API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+    const MODEL = 'glm-4-flash';
+    const USE_REAL_API = true;
+
+    // DOM
+    const briefEl = document.getElementById('brief');
+    const styleEl = document.getElementById('style');
+    const sceneEl = document.getElementById('scene');
+    const titleEl = document.getElementById('title');
+    const copyTextEl = document.getElementById('copyText');
+    const charCountEl = document.getElementById('charCount');
+    const loadingEl = document.getElementById('loading');
+    const resultContentEl = document.getElementById('resultContent');
+    const toast = document.getElementById('toast');
+    const generateBtn = document.getElementById('generate');
+
+    const samples = [
+      { brief: '想写一条请假理由，让老板无法拒绝但又觉得哪里不对', style: '一本正经胡说八道', scene: '报名帖补充' },
+      { brief: '想发一条朋友圈，看起来像人生开挂，实际上只是刚喝到一杯奶茶', style: '离谱中带合理', scene: '朋友圈文案' },
+      { brief: '给朋友写生日祝福，要求像总统讲话一样正式，但内容必须离谱', style: '假正经', scene: '海报宣传语' },
+      { brief: '想做一个假装很专业的海报文案，实际上是让大家看完就笑', style: '一本正经胡说八道', scene: '海报宣传语' },
+      { brief: '想把开会迟到这件事包装成"战略性压轴登场"', style: '假正经', scene: '短视频脚本' },
+      { brief: '想写一条报名帖，让评委觉得我很厉害但其实我什么都不会', style: '社交发疯', scene: '报名帖补充' },
+      { brief: '想把"今天不想上班"包装成"战略性工作节奏调整方案"', style: '一本正经胡说八道', scene: '朋友圈文案' },
+      { brief: '想发一条朋友圈，让前任以为我过得很好，但其实只是吃了顿好的', style: '社交发疯', scene: '朋友圈文案' }
+    ];
+
+    const styleMap = {
+      '一本正经胡说八道': { desc: '以学术论文的严谨结构，论述完全不靠谱的内容', tone: '学术风' },
+      '假正经': { desc: '以公文报告的正式语气，包装荒诞内容', tone: '公文风' },
+      '离谱中带合理': { desc: '先建立逻辑框架，再逐步走向荒诞', tone: '逻辑风' },
+      '社交发疯': { desc: '用夸张戏剧化的表达，制造强烈反差', tone: '发疯风' }
+    };
+
+    const sceneMap = {
+      '报名帖补充': '报名帖',
+      '朋友圈文案': '朋友圈',
+      '海报宣传语': '海报',
+      '短视频脚本': '短视频'
+    };
+
+    function updateCounter() {
+      charCountEl.textContent = briefEl.value.length;
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    function showLoading() {
+      loadingEl.classList.add('active');
+      resultContentEl.style.display = 'none';
+      generateBtn.disabled = true;
+    }
+
+    function hideLoading() {
+      loadingEl.classList.remove('active');
+      resultContentEl.style.display = 'block';
+      generateBtn.disabled = false;
+    }
+
+    async function callAIAPI(brief, style, scene) {
+      if (!USE_REAL_API) {
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        return null;
+      }
+
+      const prompt = `你是一个"AI整活生成器"，专门帮助用户以"${style}"的风格生成"${scene}"的内容。
+
+用户场景：${brief}
+
+请生成以下内容（用中文）：
+1. 一个有趣的标题
+2. 一段完整的正文内容（200-400字），要求：
+   - 风格：${style}
+   - 场景：${scene}
+   - 内容要离谱但看起来合理
+   - 使用 HTML 标签（<br>换行，<strong>加粗）
+3. 2-4个标签
+
+请按以下格式返回：
+TITLE: [标题]
+CONTENT: [正文内容]
+TAGS: [标签1, 标签2, 标签3]`;
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`
+          },
+          body: JSON.stringify({
+            model: MODEL,
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.9,
+            max_tokens: 800
+          })
+        });
+
+        if (!response.ok) throw new Error('API 调用失败');
+
+        const data = await response.json();
+        const content = data.choices[0].message.content;
+
+        const title = content.match(/TITLE:\s*(.+)/)?.[1] || '生成失败';
+        const text = content.match(/CONTENT:\s*([\s\S]+?)(?=TAGS:|$)/)?.[1]?.trim() || '';
+        const tags = content.match(/TAGS:\s*(.+)/)?.[1]?.split(',').map(t => t.trim()) || [];
+
+        return { title, content: text, tags };
+      } catch (error) {
+        console.error('API 调用失败:', error);
+        return null;
+      }
+    }
+
+    function generateMockContent(brief, style, scene) {
+      const sceneLabel = sceneMap[scene];
+      const styleData = styleMap[style];
+
+      const titles = [
+        `当"<span class="highlight">${brief.slice(0, 12)}</span>"遇上 AI 整活：一份${sceneLabel}创作报告`,
+        `【${sceneLabel}预警】当"${brief.slice(0, 10)}"遇上 AI 整活`,
+        `震惊！有人把"${brief.slice(0, 10)}"写成了${sceneLabel}，效果离谱`,
+        `如何用"${styleData.tone}"写${sceneLabel}？AI 给出了离谱答案`
+      ];
+      const title = titles[Math.floor(Math.random() * titles.length)];
+
+      const contents = {
+        '一本正经胡说八道': `在本次「${brief.slice(0, 10)}创作研究」项目中，我们以「如何让${brief.slice(0, 10)}显得合理又离谱」为核心课题，进行了深度探索与实践。<br><br>
+        通过对人类${brief.slice(0, 8)}心理的分析与 AI 离谱思维的结合，我们提出了一套全新的${brief.slice(0, 8)}生成模型。<br><br>
+        该模型不仅考虑了受众的心理承受能力，还兼顾了创作者的演技水平，最终生成了一系列合理中带着离谱、离谱中透着真诚的${brief.slice(0, 8)}。`,
+        '假正经': `关于${brief.slice(0, 10)}的${sceneLabel}文案方案：采用公文式结构，先陈述背景，再提出"解决方案"，最后以看似合理的结论收尾。<br><br>
+        全程保持冷静客观的叙述语调，让读者在细品之后发现其中的荒诞逻辑。<br><br>
+        经系统分析，该${brief.slice(0, 8)}在${sceneLabel}场景下具备完整的逻辑框架与严肃语气，同时内含适度荒诞元素。`,
+        '离谱中带合理': `"${brief}"这个需求，初看平平无奇。但当我们用${sceneLabel}的视角重新审视，会发现其中隐藏着大量可以被"合理夸张"的空间。<br><br>
+        不是硬搞笑，而是让逻辑自己走到荒诞的尽头。<br><br>
+        AI 经过深度思考后认为：这件事表面上很普通，但如果用${sceneLabel}的形式表达，可以加入一些"听起来很有道理但仔细想想完全不对"的细节。`,
+        '社交发疯': `家人们谁懂啊！！！"${brief}"这种需求 AI 居然真的接了！！！而且生成的${sceneLabel}文案离谱到让我笑出腹肌！！！<br><br>
+        救命🆘 我只是随便说了"${brief}"，AI 就给我整了个${sceneLabel}，看完我直接原地升天！！！<br><br>
+        这也太会整活了吧！！！快艾特你的冤种朋友来看！！！`
+      };
+
+      const content = contents[style];
+      const tags = [sceneLabel, style, '离谱', '搞笑'];
+
+      return { title, content, tags };
+    }
+
+    async function generate() {
+      const brief = briefEl.value.trim() || '一个普通但不好意思直接说出口的需求';
+      const style = styleEl.value;
+      const scene = sceneEl.value;
+
+      showLoading();
+
+      let result = null;
+      if (USE_REAL_API) {
+        result = await callAIAPI(brief, style, scene);
+      }
+
+      if (!result) {
+        await new Promise(resolve => setTimeout(resolve, 800));
+        result = generateMockContent(brief, style, scene);
+      }
+
+      titleEl.innerHTML = result.title;
+      copyTextEl.innerHTML = result.content;
+
+      const tagsContainer = document.getElementById('tagsContainer');
+      tagsContainer.innerHTML = result.tags.map((tag, i) =>
+        `<span class="tag-item ${i === 0 ? 'active' : ''}">${tag}</span>`
+      ).join('');
+
+      hideLoading();
+    }
+
+    function randomize() {
+      const sample = samples[Math.floor(Math.random() * samples.length)];
+      briefEl.value = sample.brief;
+      styleEl.value = sample.style;
+      sceneEl.value = sample.scene;
+      updateCounter();
+      generate();
+      showToast('🎲 换了一个灵感');
+    }
+
+    async function copyResult() {
+      const text = [
+        titleEl.textContent,
+        '',
+        copyTextEl.textContent.replace(/<br>/g, '\n').replace(/<[^>]*>/g, '')
+      ].join('\n');
+
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast('✓ 已复制到剪贴板');
+      } catch {
+        showToast('复制失败，请手动复制');
+      }
+    }
+
+    // 事件
+    document.getElementById('generate').addEventListener('click', generate);
+    document.getElementById('randomize').addEventListener('click', randomize);
+    document.getElementById('copy').addEventListener('click', copyResult);
+    document.getElementById('copyFull').addEventListener('click', copyResult);
+    document.getElementById('useExample').addEventListener('click', () => {
+      const sample = samples[0];
+      briefEl.value = sample.brief;
+      styleEl.value = sample.style;
+      sceneEl.value = sample.scene;
+      updateCounter();
+      generate();
+    });
+
+    briefEl.addEventListener('input', updateCounter);
+    briefEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.ctrlKey) {
+        generate();
+      }
+    });
+
+    // 标签点击
+    document.getElementById('tagsContainer').addEventListener('click', (e) => {
+      if (e.target.classList.contains('tag-item')) {
+        document.querySelectorAll('.tag-item').forEach(t => t.classList.remove('active'));
+        e.target.classList.add('active');
+      }
+    });
+
+    // 初始化
+    updateCounter();
+    generate();
+  </script>
+</body>
+</html>

@@ -2742,7 +2742,8 @@ TAGS: [标签1, 标签2, 标签3]`;
         `我家那只叫"董事长"的橘猫，今天用爪子拍了三下空饭盆，然后意味深长地看了我一眼。我解读了一下，它是在说"你今天别想出门"。`,
         `出门前镜子裂了一条缝，我上网查了一下，说是"有大人物降临"。为了大家的安全，我觉得今天不宜出门。`,
         `我的拖鞋今天早上自己跑到了沙发底下，我追了它十分钟。它赢了。我觉得这是某种预兆，今天不宜上班。`,
-        `楼下早餐店老板今天多给了我一个包子，我觉得这是命运的暗示——今天应该休息。不能辜负命运。`
+        `楼下早餐店老板今天多给了我一个包子，我觉得这是命运的暗示——今天应该休息。不能辜负命运。`,
+        `我家WiFi今天早上突然改了密码，路由器不承认是它干的。我需要留在家里查明真相，这关乎家庭网络安全。`
       ];
       const endings = [
         `保证请假期间随时可联系（虽然我可能假装信号不好）。`,
@@ -2753,28 +2754,28 @@ TAGS: [标签1, 标签2, 标签3]`;
       ];
       const excuse = excuses[Math.floor(Math.random() * excuses.length)];
       const ending = endings[Math.floor(Math.random() * endings.length)];
-      return `尊敬的领导：<br><br>根据《职场人心理健康保护条例》第${Math.floor(Math.random()*200+50)}条（我编的），本人因以下不可抗力需请假一天：<br><br><strong>${excuse}</strong><br><br>${brief}这件事，真的不能再等了。再等下去我怕自己会变成一个没有感情的工作机器（虽然已经差不多了）。<br><br>${ending}`;
+      return `尊敬的领导：<br><br>根据《职场人心理健康保护条例》第${Math.floor(Math.random()*200+50)}条（我编的），本人因以下不可抗力需请假一天：<br><br><strong>${excuse}</strong><br><br>我知道这个理由听起来不太正经，但事情就是这么离谱，我也没办法。再等下去我怕自己会变成一个没有感情的工作机器（虽然已经差不多了）。<br><br>${ending}`;
     }
 
     function generateFormal(brief, keywords, sceneLabel) {
       const leaders = ['各相关部门', '全体员工', '各科室', '各位同志'];
       const tasks = [
-        `将<strong>${keywords}</strong>列为本月核心战略任务，优先级高于一切（包括周会）`,
-        `成立${keywords}专项工作组，由本人担任组长（因为只有我在乎这件事）`,
-        `各部门需在三个工作日内提交${keywords}落实方案，格式不限，但必须好笑`,
+        `将<strong>此事</strong>列为本月核心战略任务，优先级高于一切（包括周会）`,
+        `成立专项工作组，由本人担任组长（因为只有我在乎这件事）`,
+        `各部门需在三个工作日内提交落实方案，格式不限，但必须好笑`,
         `拒不执行者，罚抄《如何让老板开心》100遍，抄完还要写读后感`
       ];
       const leader = leaders[Math.floor(Math.random() * leaders.length)];
       const task1 = tasks[Math.floor(Math.random() * tasks.length)];
       const task2 = tasks[Math.floor(Math.random() * tasks.length)];
-      return `关于${keywords}的紧急通知<br><br>${leader}：<br><br>经班子研究决定（其实就是我一个人想的），现就${brief}事宜通知如下：<br><br>一、${task1}。<br><br>二、${task2}。<br><br>三、本通知自发布之日起生效，如有异议，请保留。我们会认真听取（然后假装没听到）。<br><br>特此通知。<br><br>（盖章）<br>注：章找不到了，先画一个 ○`;
+      return `关于此事的紧急通知<br><br>${leader}：<br><br>经班子研究决定（其实就是我一个人想的），现就相关事宜通知如下：<br><br>一、${task1}。<br><br>二、${task2}。<br><br>三、本通知自发布之日起生效，如有异议，请保留。我们会认真听取（然后假装没听到）。<br><br>特此通知。<br><br>（盖章）<br>注：章找不到了，先画一个 ○`;
     }
 
     function generateAbsurd(brief, keywords, sceneLabel) {
       const chains = [
-        `第一步：${keywords} = 解决一个问题<br>第二步：解决问题 = 产生价值<br>第三步：产生价值 = 获得认可<br>第四步：获得认可 = 升职加薪<br>第五步：升职加薪 = 走向人生巅峰<br><br>所以，<strong>${keywords} = 走向人生巅峰</strong>。<br><br>这个逻辑没毛病吧？每一步都成立，但串起来就是觉得哪里不对。就像我妈说"你看看别人家的孩子"，每一步都对，但结论就是让我想离家出走。`,
-        `已知：人 = 吃饭的机器<br>又知：机器 = 需要维护的<br>所以：人 = 需要维护的<br>维护 = 休息<br>所以：人 = 需要休息<br><br>结论：<strong>${brief}是符合科学规律的</strong>。<br><br>这不是我懒，这是物理学。你要反对，你就是在反科学。`,
-        `前提：地球有70亿人<br>推论：我是其中之一<br>又推论：70亿人里总有人在工作<br>结论：所以我不工作也有人工作<br><br>因此<strong>${keywords}完全可以交给别人</strong>。<br><br>这不是推卸责任，这是资源优化配置。我作为一个有大局观的人，选择把机会让给别人。`
+        `第一步：做这件事 = 解决一个问题<br>第二步：解决问题 = 产生价值<br>第三步：产生价值 = 获得认可<br>第四步：获得认可 = 升职加薪<br>第五步：升职加薪 = 走向人生巅峰<br><br>所以，<strong>做这件事 = 走向人生巅峰</strong>。<br><br>这个逻辑没毛病吧？每一步都成立，但串起来就是觉得哪里不对。就像我妈说"你看看别人家的孩子"，每一步都对，但结论就是让我想离家出走。`,
+        `已知：人 = 吃饭的机器<br>又知：机器 = 需要维护的<br>所以：人 = 需要维护的<br>维护 = 休息<br>所以：人 = 需要休息<br><br>结论：<strong>今天休息是符合科学规律的</strong>。<br><br>这不是我懒，这是物理学。你要反对，你就是在反科学。`,
+        `前提：地球有70亿人<br>推论：我是其中之一<br>又推论：70亿人里总有人在工作<br>结论：所以我不工作也有人工作<br><br>因此<strong>这件事完全可以交给别人</strong>。<br><br>这不是推卸责任，这是资源优化配置。我作为一个有大局观的人，选择把机会让给别人。`
       ];
       return chains[Math.floor(Math.random() * chains.length)];
     }
@@ -2788,7 +2789,7 @@ TAGS: [标签1, 标签2, 标签3]`;
       ];
       const middles = [
         `这${sceneLabel}发出去不得炸翻全场？？？我已经能想象到大家的表情了哈哈哈哈`,
-        `我直接<strong>${keywords}</strong>安排上！这波操作我愿称之为"年度最佳"（自封的）`,
+        `我直接<strong>安排上</strong>！这波操作我愿称之为"年度最佳"（自封的）`,
         `不说了不说了，懂的都懂，不懂的说了也不懂。这波直接封神！`,
         `我已经把这段话设为手机壁纸了，每天看一遍，提醒自己：人生苦短，必须整活。`
       ];
@@ -2801,7 +2802,7 @@ TAGS: [标签1, 标签2, 标签3]`;
       const open = opens[Math.floor(Math.random() * opens.length)];
       const middle = middles[Math.floor(Math.random() * middles.length)];
       const close = closes[Math.floor(Math.random() * closes.length)];
-      return `${open}<br><br>${brief}这件事我真的憋不住了！！！<br><br>${middle}！！！<br><br>${close}`;
+      return `${open}<br><br>今天发生的事我真的憋不住了！！！<br><br>${middle}！！！<br><br>${close}`;
     }
 
     function generateMockContent(brief, style, scene) {
@@ -2810,10 +2811,11 @@ TAGS: [标签1, 标签2, 标签3]`;
       const styleData = styleMap[style];
 
       const titles = [
-        `关于${keywords}的紧急申请`,
-        `震惊！${keywords}竟然...`,
-        `${keywords}这件事，我必须说清楚`,
-        `一份关于${keywords}的严肃声明`
+        `一份非常严肃但毫无诚意的声明`,
+        `震惊！这件事竟然...`,
+        `关于今天这件事，我必须说清楚`,
+        `一个打工人发自内心的紧急申请`,
+        `本人对此事的正式回应`
       ];
       const title = titles[Math.floor(Math.random() * titles.length)];
 

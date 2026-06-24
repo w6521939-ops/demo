@@ -2618,37 +2618,20 @@
         return null;
       }
 
-      const systemPrompt = `你是一个顶级搞笑文案写手，擅长用"一本正经胡说八道"的方式制造笑点。用户告诉你想写什么，你直接写出那段成品文案。
+      const systemPrompt = `你是一个顶级搞笑文案写手，擅长"一本正经胡说八道"。用户说写什么，你直接写成品文案。
 
-## 幽默核心法则
+幽默法则：
+1. 具体细节出笑点："我家猫"→"我家那只叫董事长的橘猫拍了三下空饭盆"
+2. 反差是灵魂：正式格式+离谱内容
+3. 结尾必须反转："保证随时可联系（虽然我手机静音三天了）"
+4. 自嘲永远有效："工资不高但发际线很高"
 
-1. **具体细节出笑点**：不要写"我家宠物"，要写"我家那只叫'董事长'的橘猫今天用爪子拍了三下空饭盆，然后意味深长地看了我一眼"。越具体越好笑。
-2. **反差是灵魂**：正式的格式 + 离谱的内容 = 笑点。用"根据《xxx法》第x章第x条"开头，但内容是"本人因冰箱里的酸奶过期了需要请假"。
-3. **自嘲永远有效**：拿自己开涮，不要拿别人。"虽然我工资不高，但我的发际线很高啊。"
-4. **荒诞推理链**：A→B→C→D，每一步看似合理，结论完全离谱。"吃饭→吃饱→不饿→不需要吃饭→省钱→发财，所以吃饭=发财。"
-5. **结尾反转**：前面铺垫正经，最后一句突然垮掉。"保证随时可联系（虽然我手机已经静音三天了）。"
-6. **网络梗自然融入**：不要硬塞，要自然。"本人已将此事上报给宇宙总部，目前正在等待回复（已读不回）。"
+示例：
+TITLE: 关于本人因不可抗力申请休假的紧急报告
+CONTENT: 尊敬的领导：<br><br>根据《职场人心理健康保护条例》第250条（我编的），本人需请假一天：<br><br><strong>今早我家猫把工牌叼走了</strong>，经过两小时谈判（主要是我求它），它提出"罐头换工牌"方案。作为有原则的人我拒绝了（因为家里没罐头了）。<br><br>保证随时可联系（虽然我可能假装信号不好）。<br><br>此致<br>一个被猫PUA的员工
+TAGS: 请假, 猫咪绑架
 
-## 示例1（请假理由）
-TITLE: 关于本人因不可抗力申请休假一天的紧急报告
-CONTENT: 尊敬的领导：<br><br>根据《职场人心理健康保护条例》第250条（我编的），本人因以下不可抗力需请假一天：<br><br><strong>今早我家猫把我的工牌叼走了</strong>，目前藏匿位置不明。经过长达两小时的谈判（主要是我求它），它表示需要时间考虑，并提出了"罐头换工牌"的交换方案。<br><br>作为一个有原则的人，我不能向猫妥协（主要是因为家里没有罐头了）。<br><br>此外，我的多肉植物今天看起来有点蔫，我怀疑它是不是在职场霸凌中被旁边的仙人掌欺负了，需要我回家主持公道。<br><br>保证请假期间随时可联系（虽然我可能假装信号不好）。<br><br>此致<br>一个被植物和猫同时PUA的员工
-TAGS: 请假, 猫咪绑架, 植物维权
-
-## 示例2（朋友圈文案）
-TITLE: 喝到一杯奶茶，感觉人生到达了巅峰（的0.01%）
-CONTENT: 家人们谁懂啊！！！<br><br>今天买了一杯<strong>15块钱的奶茶</strong>，喝第一口的时候，我仿佛看到了人生的另一种可能。<br><br>那种丝滑的口感，让我短暂忘记了自己银行卡余额只有两位数的事实。奶盖的绵密，抚平了我被甲方改了18稿的创伤。珍珠的Q弹，给了我明天继续搬砖的勇气。<br><br>这杯奶茶，不只是一杯奶茶。它是<strong>穷人版的米其林三星</strong>，是打工人的心灵SPA，是我这个月唯一的快乐来源。<br><br>如果你问我幸不幸福，我只能说：幸福，但只有15块钱那么多。
-TAGS: 奶茶续命, 穷人快乐, 打工人
-
-## 示例3（辞职信）
-TITLE: 一封非常正式但毫无诚意的辞职信
-CONTENT: 尊敬的领导：<br><br>经过深思熟虑（大约3秒钟），本人决定正式提出辞职。<br><br>辞职原因如下：<br>一、<strong>我的头发已经提出了抗议</strong>，它们以每天100根的速度集体离职，我觉得我应该跟它们保持队形。<br>二、工位上的绿萝都死了，我觉得这是某种暗示。<br>三、每次开会我都想问"能不能直接说结论"，但我的嘴说"好的没问题"。<br><br>感谢公司这段时间的培养，让我学会了：<br>- 如何在3分钟内吃完一顿饭<br>- 如何在开会时保持清醒（偶尔失败）<br>- 如何把"我不想干"翻译成"我来优化一下流程"<br><br>最后，祝公司业绩长虹，祝同事们头发常在。
-TAGS: 辞职, 头发维权, 职场真相
-
-## 绝对禁止
-- 写"研究报告""课题探索""深度分析"这种学术腔
-- 空洞套话如"我们致力于""经过深度思考"
-- 把用户输入当论文题目来论述
-- 笑点重复（猫+仙人掌不要每次都用）`;
+禁止：写研究报告、学术腔、空洞套话、把用户输入当论文题目。`;
 
       const styleHints = {
         '一本正经胡说八道': '用正式文体写离谱内容（如请假条、申请书、通知）',
@@ -2689,7 +2672,7 @@ TAGS: [标签1, 标签2, 标签3]`;
 
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
 
         const response = await fetch(API_URL, {
           method: 'POST',
@@ -2711,18 +2694,44 @@ TAGS: [标签1, 标签2, 标签3]`;
 
         clearTimeout(timeoutId);
 
-        if (!response.ok) throw new Error('API 调用失败');
+        if (!response.ok) {
+          const errText = await response.text();
+          console.error('API HTTP错误:', response.status, errText);
+          throw new Error(`API ${response.status}`);
+        }
 
         const data = await response.json();
         const content = data.choices[0].message.content;
 
-        const title = content.match(/TITLE:\s*(.+)/)?.[1] || '生成失败';
-        const text = content.match(/CONTENT:\s*([\s\S]+?)(?=TAGS:|$)/)?.[1]?.trim() || '';
-        const tags = content.match(/TAGS:\s*(.+)/)?.[1]?.split(',').map(t => t.trim()) || [];
+        // 更灵活的格式解析
+        let title = '', text = '', tags = [];
+        
+        // 尝试匹配 TITLE: 标题
+        const titleMatch = content.match(/TITLE[:：]\s*(.+)/i);
+        title = titleMatch ? titleMatch[1].trim() : '';
+        
+        // 尝试匹配 CONTENT: 正文
+        const contentMatch = content.match(/CONTENT[:：]\s*([\s\S]+?)(?=TAGS[:：]|$)/i);
+        text = contentMatch ? contentMatch[1].trim() : '';
+        
+        // 尝试匹配 TAGS: 标签
+        const tagsMatch = content.match(/TAGS[:：]\s*(.+)/i);
+        tags = tagsMatch ? tagsMatch[1].split(/[,，]/).map(t => t.trim()).filter(Boolean) : [];
+
+        // 如果格式解析失败，尝试直接使用返回内容
+        if (!title && !text) {
+          // AI 没按格式返回，直接用内容
+          const lines = content.split('\n').filter(l => l.trim());
+          title = lines[0]?.replace(/^[#*【】]+/g, '').trim() || 'AI生成内容';
+          text = lines.slice(1).join('<br>') || content;
+        } else if (!text && title) {
+          // 只有标题没有正文
+          text = content.replace(/TITLE[:：]\s*.+/i, '').trim() || title;
+        }
 
         return { title, content: text, tags };
       } catch (error) {
-        console.error('API 调用失败:', error);
+        console.error('API 调用失败:', error.name, error.message);
         return null;
       }
     }

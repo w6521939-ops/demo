@@ -15,6 +15,7 @@
       color: #e8ecf4;
       min-height: 100vh;
       overflow-x: hidden;
+      padding-bottom: 80px;
     }
 
     @keyframes gradient-shift {
@@ -100,14 +101,29 @@
       50% { opacity: 1; transform: scale(1.3); }
     }
 
-    /* 主容器 */
-    .container {
+    /* SPA 页面路由 */
+    .page {
+      display: none;
       position: relative;
       z-index: 1;
       width: 100%;
       max-width: 1400px;
       margin: 0 auto;
       padding: 40px 48px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 主容器 */
+    .container {
       display: grid;
       grid-template-columns: 1fr 1.5fr;
       gap: 40px;
@@ -236,17 +252,9 @@
       margin-bottom: 12px;
     }
 
-    .step-icon.green {
-      background: rgba(0, 217, 163, 0.15);
-    }
-
-    .step-icon.purple {
-      background: rgba(123, 45, 142, 0.15);
-    }
-
-    .step-icon.blue {
-      background: rgba(0, 180, 216, 0.15);
-    }
+    .step-icon.green { background: rgba(0, 217, 163, 0.15); }
+    .step-icon.purple { background: rgba(123, 45, 142, 0.15); }
+    .step-icon.blue { background: rgba(0, 180, 216, 0.15); }
 
     .step-card h4 {
       font-size: 14px;
@@ -328,9 +336,7 @@
       font-weight: 600;
     }
 
-    .card-header-icon {
-      font-size: 18px;
-    }
+    .card-header-icon { font-size: 18px; }
 
     .card-action {
       display: flex;
@@ -452,9 +458,7 @@
       box-shadow: 0 6px 28px rgba(0, 217, 163, 0.4);
     }
 
-    .generate-btn:active {
-      transform: translateY(0);
-    }
+    .generate-btn:active { transform: translateY(0); }
 
     .generate-btn:disabled {
       opacity: 0.6;
@@ -481,9 +485,7 @@
       transition: color 0.2s ease;
     }
 
-    .secondary-btn:hover {
-      color: rgba(255, 255, 255, 0.8);
-    }
+    .secondary-btn:hover { color: rgba(255, 255, 255, 0.8); }
 
     /* 结果区域 */
     .result-status {
@@ -494,7 +496,7 @@
       color: #00d9a3;
     }
 
-    /* 结果内容 - 上下横排布局 */
+    /* 结果内容 */
     .result-grid {
       display: flex;
       flex-direction: column;
@@ -603,9 +605,7 @@
       padding: 60px 20px;
     }
 
-    .loading-overlay.active {
-      display: flex;
-    }
+    .loading-overlay.active { display: flex; }
 
     .loading-spinner {
       width: 40px;
@@ -616,9 +616,7 @@
       animation: spin 0.8s linear infinite;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     .loading-text {
       color: rgba(255, 255, 255, 0.5);
@@ -628,7 +626,7 @@
     /* Toast */
     .toast {
       position: fixed;
-      bottom: 32px;
+      bottom: 100px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
       background: linear-gradient(135deg, #00d9a3, #00b4d8);
@@ -648,20 +646,804 @@
       opacity: 1;
     }
 
+    /* ===== 进场动画 ===== */
+    .intro-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0a0e1a 0%, #1a0a2e 40%, #0d1b2a 70%, #1a0a2e 100%);
+      overflow: hidden;
+      transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.2s;
+    }
+    .intro-overlay.dismissed {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .intro-overlay canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .intro-glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0;
+      animation: glowFadeIn 2s ease-out 0.3s forwards;
+    }
+    .intro-glow.g1 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(0,217,163,0.3), transparent 70%);
+      top: 15%; left: 10%;
+    }
+    .intro-glow.g2 {
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(138,43,226,0.2), transparent 70%);
+      bottom: 15%; right: 10%;
+      animation-delay: 0.6s;
+    }
+    .intro-glow.g3 {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(0,180,216,0.15), transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation-delay: 0.9s;
+    }
+    @keyframes glowFadeIn { to { opacity: 1; } }
+
+    .intro-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 2rem;
+    }
+    .intro-kicker {
+      font-size: 0.7rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: rgba(0,217,163,0.8);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: introFadeUp 0.8s ease-out 0.5s forwards;
+    }
+    .intro-kicker::before, .intro-kicker::after {
+      content: "";
+      display: inline-block;
+      width: 20px;
+      height: 1px;
+      background: rgba(0,217,163,0.5);
+      vertical-align: middle;
+      margin: 0 0.8rem;
+    }
+    .intro-title {
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 0.8rem;
+    }
+    .intro-title .char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(40px) rotateX(-90deg);
+      animation: charReveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    .intro-title .char.space { width: 0.3em; }
+    .intro-title .char.accent { color: #00d9a3; }
+    .intro-title .char.star {
+      color: #00d9a3;
+      display: inline-block;
+      animation: charReveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, introStarPulse 2s ease-in-out infinite;
+    }
+    @keyframes charReveal { to { opacity: 1; transform: translateY(0) rotateX(0); } }
+    @keyframes introStarPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+
+    .intro-tagline {
+      font-size: clamp(0.95rem, 2vw, 1.15rem);
+      color: rgba(255,255,255,0.5);
+      font-style: italic;
+      opacity: 0;
+      transform: translateY(15px);
+      animation: introFadeUp 0.8s ease-out 2.2s forwards;
+    }
+    .intro-divider {
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00d9a3, transparent);
+      margin: 1.5rem auto;
+      animation: dividerGrow 0.8s ease-out 2.5s forwards;
+    }
+    @keyframes dividerGrow { to { width: 120px; } }
+    @keyframes introFadeUp { to { opacity: 1; transform: translateY(0); } }
+
+    .intro-enter-btn {
+      margin-top: 1.5rem;
+      padding: 14px 40px;
+      border: 1px solid rgba(0,217,163,0.4);
+      border-radius: 999px;
+      background: rgba(0,217,163,0.08);
+      color: #00d9a3;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(15px);
+      animation: introFadeUp 0.8s ease-out 2.8s forwards;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .intro-enter-btn:hover {
+      background: rgba(0,217,163,0.15);
+      border-color: rgba(0,217,163,0.6);
+      box-shadow: 0 0 30px rgba(0,217,163,0.2);
+      transform: translateY(-2px);
+    }
+    .intro-enter-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(0,217,163,0.1), transparent);
+      transform: translateX(-100%);
+      animation: btnShimmer 3s ease-in-out infinite 3s;
+    }
+    @keyframes btnShimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+    .intro-hint {
+      position: absolute;
+      bottom: 40px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.1em;
+      opacity: 0;
+      animation: introFadeUp 0.8s ease-out 3.2s forwards;
+    }
+
+    /* 主内容入场 */
+    .app-content {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .app-content.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .stagger-item {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .stagger-item.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== 底部导航栏 ===== */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(10, 14, 26, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 16px;
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .nav-item .nav-icon {
+      font-size: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-item.active {
+      color: #00d9a3;
+    }
+
+    .nav-item.active .nav-icon {
+      transform: translateY(-2px);
+      filter: drop-shadow(0 0 8px rgba(0, 217, 163, 0.4));
+    }
+
+    .nav-item::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00d9a3, transparent);
+      transition: width 0.3s ease;
+    }
+
+    .nav-item.active::after {
+      width: 20px;
+    }
+
+    /* ===== 作品广场 ===== */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+      margin-top: 24px;
+    }
+
+    .gallery-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 24px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .gallery-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(0, 217, 163, 0.2);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .gallery-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .gallery-card-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00d9a3, #00b4d8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .gallery-card-meta {
+      flex: 1;
+    }
+
+    .gallery-card-author {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .gallery-card-time {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .gallery-card-style {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(0, 217, 163, 0.1);
+      border: 1px solid rgba(0, 217, 163, 0.2);
+      color: #00d9a3;
+      font-size: 11px;
+    }
+
+    .gallery-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .gallery-card-content {
+      font-size: 13px;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 12px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .gallery-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .gallery-card-tags {
+      display: flex;
+      gap: 6px;
+    }
+
+    .gallery-card-tag {
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .gallery-card-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .gallery-card-action {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .gallery-card-action:hover {
+      color: #00d9a3;
+    }
+
+    .gallery-card-action.liked {
+      color: #ff4d6d;
+    }
+
+    /* ===== 玩法指南 ===== */
+    .guide-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .guide-section {
+      margin-bottom: 40px;
+    }
+
+    .guide-section-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .guide-section-title .icon {
+      font-size: 28px;
+    }
+
+    .guide-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .guide-step {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .guide-step:hover {
+      border-color: rgba(0, 217, 163, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .guide-step-num {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      font-size: 36px;
+      font-weight: 800;
+      color: rgba(0, 217, 163, 0.1);
+      line-height: 1;
+    }
+
+    .guide-step-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 14px;
+    }
+
+    .guide-step h4 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .guide-step p {
+      font-size: 13px;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .tip-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .tip-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(0, 217, 163, 0.15);
+    }
+
+    .tip-card .tip-icon {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .tip-card h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .tip-card p {
+      font-size: 13px;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* ===== 我的创作 ===== */
+    .creation-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .creation-tab {
+      padding: 10px 24px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .creation-tab.active {
+      background: rgba(0, 217, 163, 0.1);
+      border-color: rgba(0, 217, 163, 0.2);
+      color: #00d9a3;
+    }
+
+    .creation-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .creation-item {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .creation-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .creation-item-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .creation-item-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .creation-item-time {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .creation-item-content {
+      font-size: 14px;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 12px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .creation-item-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .creation-item-tags {
+      display: flex;
+      gap: 6px;
+    }
+
+    .creation-item-tag {
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .creation-item-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .creation-item-btn {
+      padding: 6px 14px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .creation-item-btn:hover {
+      background: rgba(0, 217, 163, 0.1);
+      border-color: rgba(0, 217, 163, 0.2);
+      color: #00d9a3;
+    }
+
+    .creation-empty {
+      text-align: center;
+      padding: 80px 20px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .creation-empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    /* ===== 关于页面 ===== */
+    .about-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .about-hero {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .about-hero-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+      display: inline-block;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .about-hero h2 {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .about-hero p {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.5);
+      line-height: 1.6;
+    }
+
+    .about-section {
+      margin-bottom: 40px;
+    }
+
+    .about-section h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .about-section p {
+      font-size: 14px;
+      line-height: 1.8;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 12px;
+    }
+
+    .tech-stack {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .tech-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .tech-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(0, 217, 163, 0.15);
+    }
+
+    .tech-item-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(0, 217, 163, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .tech-item-info h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .tech-item-info p {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+      margin: 0;
+    }
+
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .feature-item-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(0, 217, 163, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .feature-item h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .feature-item p {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    /* ===== 打字机效果 ===== */
+    .typewriter {
+      overflow: hidden;
+      border-right: 2px solid #00d9a3;
+      white-space: nowrap;
+      animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    @keyframes blink-caret {
+      from, to { border-color: transparent; }
+      50% { border-color: #00d9a3; }
+    }
+
+    .typewriter-text {
+      display: inline;
+    }
+
+    .typewriter-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.2em;
+      background: #00d9a3;
+      margin-left: 2px;
+      vertical-align: text-bottom;
+      animation: blink-caret 0.75s step-end infinite;
+    }
+
     /* 响应式 */
     @media (max-width: 1024px) {
       .container {
         grid-template-columns: 1fr;
         max-width: 900px;
-        padding: 32px;
       }
       .steps-grid {
         grid-template-columns: repeat(3, 1fr);
       }
+      .page {
+        padding: 32px;
+      }
     }
 
     @media (max-width: 640px) {
-      .container {
+      .page {
         padding: 20px 16px;
       }
       .main-title {
@@ -673,10 +1455,40 @@
       .selectors-row {
         grid-template-columns: 1fr;
       }
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+      .nav-item {
+        padding: 6px 8px;
+      }
+      .nav-item span {
+        font-size: 10px;
+      }
+      .guide-steps {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- ===== 进场动画遮罩 ===== -->
+  <div class="intro-overlay" id="introOverlay">
+    <canvas id="introCanvas"></canvas>
+    <div class="intro-glow g1"></div>
+    <div class="intro-glow g2"></div>
+    <div class="intro-glow g3"></div>
+    <div class="intro-content">
+      <div class="intro-kicker">Powered by TRAE</div>
+      <h1 class="intro-title" id="introTitle">
+        <span class="char" style="animation-delay:0.8s">A</span><span class="char" style="animation-delay:0.88s">I</span><span class="char space" style="animation-delay:0.96s"></span><span class="char accent" style="animation-delay:1.04s">整</span><span class="char accent" style="animation-delay:1.12s">活</span><span class="char space" style="animation-delay:1.2s"></span><span class="char" style="animation-delay:1.28s">生</span><span class="char" style="animation-delay:1.36s">成</span><span class="char" style="animation-delay:1.44s">器</span><span class="char space" style="animation-delay:1.52s"></span><span class="char star" style="animation-delay:1.6s">✦</span>
+      </h1>
+      <p class="intro-tagline">把普通需求变成一本正经的胡说八道</p>
+      <div class="intro-divider"></div>
+      <button class="intro-enter-btn" id="introEnterBtn"><span>开 始 整 活</span></button>
+    </div>
+    <div class="intro-hint">✦ AI 驱动的创意内容生成器 ✦</div>
+  </div>
+
   <!-- 背景光效 -->
   <div class="bg-aurora">
     <div class="aurora-1"></div>
@@ -688,201 +1500,591 @@
   <!-- Toast -->
   <div class="toast" id="toast"></div>
 
-  <div class="container">
-    <!-- 左侧 -->
-    <div class="left-section">
-      <div>
-        <div class="tag-badge">
-          <span class="dot"></span>
-          <span>TRAE 报名演示 / 生活娱乐赛道</span>
-        </div>
-
-        <div style="position: relative;">
-          <h1 class="main-title">
-            <span class="gradient-text">AI整活生成器</span>
-          </h1>
-          <span class="title-deco">✦</span>
-          <span class="star-deco s1">✦</span>
-          <span class="star-deco s2">✦</span>
-          <span class="star-deco s3">✦</span>
-        </div>
-
-        <p class="sub-title">
-          把普通需求变成<br>
-          <span class="accent">一本正经胡说八道</span>
-        </p>
-
-        <p class="desc">
-          输入一句话，AI 自动生成报名帖、朋友圈文案、海报文案、小剧场脚本等离谱但合理的内容。
-        </p>
-      </div>
-
-      <!-- 步骤 -->
-      <div class="steps-grid">
-        <div class="step-card">
-          <span class="step-num">01</span>
-          <div class="step-icon green">✏️</div>
-          <h4>输入普通想法</h4>
-          <p>一句话描述你的需求<br>越普通越好</p>
-        </div>
-        <div class="step-card">
-          <span class="step-num">02</span>
-          <div class="step-icon purple">✨</div>
-          <h4>AI 自动整活</h4>
-          <p>AI 一本正经胡说八道<br>生成完整内容</p>
-        </div>
-        <div class="step-card">
-          <span class="step-num">03</span>
-          <div class="step-icon blue">📋</div>
-          <h4>生成可直接发布</h4>
-          <p>内容完整，可直接<br>复制使用</p>
-        </div>
-      </div>
-
-      <!-- 引言 -->
-      <div class="quote-section">
-        <span class="quote-mark">"</span>
-        <p class="quote-text">
-          不是所有灵感都要严肃，<br>
-          有些想法，AI 帮你一本正经地胡说八道。
-        </p>
-        <div class="quote-line"></div>
-      </div>
-    </div>
-
-    <!-- 右侧 -->
-    <div class="right-section">
-      <!-- 输入卡片 -->
-      <div class="glass-card">
-        <div class="card-header">
-          <div class="card-header-title">
-            <span class="card-header-icon">✨</span>
-            <span>今天想整什么活？</span>
+  <!-- ===== 页面1：首页 ===== -->
+  <div class="page active" id="page-home">
+    <div class="container app-content" id="appContent">
+      <!-- 左侧 -->
+      <div class="left-section">
+        <div class="stagger-item">
+          <div class="tag-badge">
+            <span class="dot"></span>
+            <span>TRAE 报名演示 / 生活娱乐赛道</span>
           </div>
-          <button class="card-action" id="useExample">
-            <span>⟲</span>
-            <span>使用示例</span>
-          </button>
-        </div>
 
-        <div class="input-area">
-          <textarea id="brief" placeholder="输入一句话，比如：想写一条请假理由，或者报名一个离谱比赛...">想写一条请假理由，让老板无法拒绝但又觉得哪里不对</textarea>
-          <div class="input-counter"><span id="charCount">0</span> / 200</div>
-        </div>
-
-        <div class="selectors-row">
-          <div class="select-field">
-            <label>整活风格</label>
-            <select id="style">
-              <option value="一本正经胡说八道">一本正经胡说八道</option>
-              <option value="假正经">假正经</option>
-              <option value="离谱中带合理">离谱中带合理</option>
-              <option value="社交发疯">社交发疯</option>
-            </select>
+          <div style="position: relative;">
+            <h1 class="main-title">
+              <span class="gradient-text">AI整活生成器</span>
+            </h1>
+            <span class="title-deco">✦</span>
+            <span class="star-deco s1">✦</span>
+            <span class="star-deco s2">✦</span>
+            <span class="star-deco s3">✦</span>
           </div>
-          <div class="select-field">
-            <label>输出场景</label>
-            <select id="scene">
-              <option value="报名帖补充">报名帖补充</option>
-              <option value="朋友圈文案">朋友圈文案</option>
-              <option value="海报宣传语">海报宣传语</option>
-              <option value="短视频脚本">短视频脚本</option>
-            </select>
+
+          <p class="sub-title">
+            把普通需求变成<br>
+            <span class="accent">一本正经胡说八道</span>
+          </p>
+
+          <p class="desc">
+            输入一句话，AI 自动生成报名帖、朋友圈文案、海报文案、小剧场脚本等离谱但合理的内容。
+          </p>
+        </div>
+
+        <!-- 步骤 -->
+        <div class="steps-grid stagger-item">
+          <div class="step-card">
+            <span class="step-num">01</span>
+            <div class="step-icon green">✏️</div>
+            <h4>输入普通想法</h4>
+            <p>一句话描述你的需求<br>越普通越好</p>
+          </div>
+          <div class="step-card">
+            <span class="step-num">02</span>
+            <div class="step-icon purple">✨</div>
+            <h4>AI 自动整活</h4>
+            <p>AI 一本正经胡说八道<br>生成完整内容</p>
+          </div>
+          <div class="step-card">
+            <span class="step-num">03</span>
+            <div class="step-icon blue">📋</div>
+            <h4>生成可直接发布</h4>
+            <p>内容完整，可直接<br>复制使用</p>
           </div>
         </div>
 
-        <button class="generate-btn" id="generate">
-          <span>✦</span>
-          <span>立即生成整活文案</span>
-        </button>
-
-        <div class="secondary-actions">
-          <button class="secondary-btn" id="randomize">
-            <span>⟲</span>
-            <span>换个灵感</span>
-          </button>
-          <button class="secondary-btn" id="copy">
-            <span>📋</span>
-            <span>复制结果</span>
-          </button>
+        <!-- 引言 -->
+        <div class="quote-section stagger-item">
+          <span class="quote-mark">"</span>
+          <p class="quote-text">
+            不是所有灵感都要严肃，<br>
+            有些想法，AI 帮你一本正经地胡说八道。
+          </p>
+          <div class="quote-line"></div>
         </div>
       </div>
 
-      <!-- 结果卡片 -->
-      <div class="glass-card" id="resultCard">
-        <div class="card-header">
-          <div class="card-header-title">
-            <span class="card-header-icon">✨</span>
-            <span>AI 生成结果</span>
-          </div>
-          <div class="result-status">
-            <span>✦</span>
-            <span>已为你生成一份整活文案</span>
-          </div>
-        </div>
-
-        <!-- 加载 -->
-        <div class="loading-overlay" id="loading">
-          <div class="loading-spinner"></div>
-          <div class="loading-text">AI 正在整活中...</div>
-        </div>
-
-        <!-- 结果内容 -->
-        <div id="resultContent">
-          <div class="result-grid">
-            <!-- 第一行：标题 + 标签 -->
-            <div class="result-block">
-              <div class="result-block-label">☑ 标题</div>
-              <div class="result-block-content" id="title">
-                当"<span class="highlight">想写一条请假理由</span>"遇上 AI 整活：一份请假理由创作报告
-              </div>
+      <!-- 右侧 -->
+      <div class="right-section">
+        <!-- 输入卡片 -->
+        <div class="glass-card stagger-item">
+          <div class="card-header">
+            <div class="card-header-title">
+              <span class="card-header-icon">✨</span>
+              <span>今天想整什么活？</span>
             </div>
-
-            <!-- 第二行：标签 -->
-            <div class="result-block">
-              <div class="result-block-label">☑ 标签</div>
-              <div class="tags-row" id="tagsContainer">
-                <span class="tag-item active">请假理由</span>
-                <span class="tag-item">一本正经胡说八道</span>
-                <span class="tag-item">离谱</span>
-                <span class="tag-item">搞笑</span>
-              </div>
-            </div>
-
-            <!-- 第三行：正文内容 -->
-            <div class="result-block">
-              <div class="result-block-label">☑ 正文内容</div>
-              <div class="result-block-content" id="copyText">
-                在本次「请假理由创作研究」项目中，我们以「如何让请假理由显得合理又离谱」为核心课题，进行了深度探索与实践。<br><br>
-                通过对人类请假心理的分析与 AI 离谱思维的结合，我们提出了一套全新的请假理由生成模型。<br><br>
-                该模型不仅考虑了老板的心理承受能力，还兼顾了请假者的演技水平，最终生成了一系列合理中带着离谱、离谱中透着真诚的请假理由。
-              </div>
-            </div>
-          </div>
-
-          <div class="result-footer">
-            <div class="footer-note">
-              <span>🤖</span>
-              <span>内容由 AI 生成，仅供娱乐，请勿当真</span>
-            </div>
-            <button class="copy-btn" id="copyFull">
-              <span>📋</span>
-              <span>复制全文</span>
+            <button class="card-action" id="useExample">
+              <span>⟲</span>
+              <span>使用示例</span>
             </button>
+          </div>
+
+          <div class="input-area">
+            <textarea id="brief" placeholder="输入一句话，比如：想写一条请假理由，或者报名一个离谱比赛...">想写一条请假理由，让老板无法拒绝但又觉得哪里不对</textarea>
+            <div class="input-counter"><span id="charCount">0</span> / 200</div>
+          </div>
+
+          <div class="selectors-row">
+            <div class="select-field">
+              <label>整活风格</label>
+              <select id="style">
+                <option value="一本正经胡说八道">一本正经胡说八道</option>
+                <option value="假正经">假正经</option>
+                <option value="离谱中带合理">离谱中带合理</option>
+                <option value="社交发疯">社交发疯</option>
+              </select>
+            </div>
+            <div class="select-field">
+              <label>输出场景</label>
+              <select id="scene">
+                <option value="报名帖补充">报名帖补充</option>
+                <option value="朋友圈文案">朋友圈文案</option>
+                <option value="海报宣传语">海报宣传语</option>
+                <option value="短视频脚本">短视频脚本</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="generate-btn" id="generate">
+            <span>✦</span>
+            <span>立即生成整活文案</span>
+          </button>
+
+          <div class="secondary-actions">
+            <button class="secondary-btn" id="randomize">
+              <span>⟲</span>
+              <span>换个灵感</span>
+            </button>
+            <button class="secondary-btn" id="copy">
+              <span>📋</span>
+              <span>复制结果</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 结果卡片 -->
+        <div class="glass-card stagger-item" id="resultCard">
+          <div class="card-header">
+            <div class="card-header-title">
+              <span class="card-header-icon">✨</span>
+              <span>AI 生成结果</span>
+            </div>
+            <div class="result-status">
+              <span>✦</span>
+              <span>已为你生成一份整活文案</span>
+            </div>
+          </div>
+
+          <!-- 加载 -->
+          <div class="loading-overlay" id="loading">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">AI 正在整活中...</div>
+          </div>
+
+          <!-- 结果内容 -->
+          <div id="resultContent">
+            <div class="result-grid">
+              <!-- 第一行：标题 -->
+              <div class="result-block">
+                <div class="result-block-label">☑ 标题</div>
+                <div class="result-block-content" id="title">
+                  当"<span class="highlight">想写一条请假理由</span>"遇上 AI 整活：一份请假理由创作报告
+                </div>
+              </div>
+
+              <!-- 第二行：标签 -->
+              <div class="result-block">
+                <div class="result-block-label">☑ 标签</div>
+                <div class="tags-row" id="tagsContainer">
+                  <span class="tag-item active">请假理由</span>
+                  <span class="tag-item">一本正经胡说八道</span>
+                  <span class="tag-item">离谱</span>
+                  <span class="tag-item">搞笑</span>
+                </div>
+              </div>
+
+              <!-- 第三行：正文内容 -->
+              <div class="result-block">
+                <div class="result-block-label">☑ 正文内容</div>
+                <div class="result-block-content" id="copyText">
+                  在本次「请假理由创作研究」项目中，我们以「如何让请假理由显得合理又离谱」为核心课题，进行了深度探索与实践。<br><br>
+                  通过对人类请假心理的分析与 AI 离谱思维的结合，我们提出了一套全新的请假理由生成模型。<br><br>
+                  该模型不仅考虑了老板的心理承受能力，还兼顾了请假者的演技水平，最终生成了一系列合理中带着离谱、离谱中透着真诚的请假理由。
+                </div>
+              </div>
+            </div>
+
+            <div class="result-footer">
+              <div class="footer-note">
+                <span>🤖</span>
+                <span>内容由 AI 生成，仅供娱乐，请勿当真</span>
+              </div>
+              <button class="copy-btn" id="copyFull">
+                <span>📋</span>
+                <span>复制全文</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- ===== 页面2：作品广场 ===== -->
+  <div class="page" id="page-gallery">
+    <div class="guide-container">
+      <div class="guide-section">
+        <h2 class="guide-section-title">
+          <span class="icon">🎨</span>
+          作品广场
+        </h2>
+        <p style="color: rgba(255,255,255,0.5); margin-bottom: 24px;">浏览社区精选的整活作品，发现更多创意灵感</p>
+      </div>
+
+      <div class="gallery-grid" id="galleryGrid">
+        <!-- 作品卡片将通过 JS 渲染 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 页面3：玩法指南 ===== -->
+  <div class="page" id="page-guide">
+    <div class="guide-container">
+      <div class="guide-section">
+        <h2 class="guide-section-title">
+          <span class="icon">📖</span>
+          玩法指南
+        </h2>
+        <p style="color: rgba(255,255,255,0.5); margin-bottom: 24px;">三步上手，快速成为整活大师</p>
+      </div>
+
+      <div class="guide-section">
+        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">使用步骤</h3>
+        <div class="guide-steps">
+          <div class="guide-step">
+            <span class="guide-step-num">01</span>
+            <div class="guide-step-icon" style="background: rgba(0, 217, 163, 0.15);">✏️</div>
+            <h4>输入你的想法</h4>
+            <p>在输入框中写下你的普通需求，比如"想请假但不想说实话"</p>
+          </div>
+          <div class="guide-step">
+            <span class="guide-step-num">02</span>
+            <div class="guide-step-icon" style="background: rgba(138, 43, 226, 0.15);">🎨</div>
+            <h4>选择风格与场景</h4>
+            <p>挑选你喜欢的整活风格和输出场景，让 AI 更懂你</p>
+          </div>
+          <div class="guide-step">
+            <span class="guide-step-num">03</span>
+            <div class="guide-step-icon" style="background: rgba(0, 180, 216, 0.15);">✨</div>
+            <h4>点击生成</h4>
+            <p>等待 AI 一本正经地胡说八道，然后复制使用</p>
+          </div>
+          <div class="guide-step">
+            <span class="guide-step-num">04</span>
+            <div class="guide-step-icon" style="background: rgba(255, 0, 128, 0.15);">💾</div>
+            <h4>收藏与分享</h4>
+            <p>喜欢的作品可以收藏到"我的创作"，随时查看</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-section">
+        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">整活风格说明</h3>
+        <div class="tips-grid">
+          <div class="tip-card">
+            <div class="tip-icon">🎓</div>
+            <h4>一本正经胡说八道</h4>
+            <p>以学术论文的严谨结构，论述完全不靠谱的内容。看起来特别专业，细想全是漏洞。</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon">📋</div>
+            <h4>假正经</h4>
+            <p>以公文报告的正式语气，包装荒诞内容。仿佛领导讲话，但内容让人忍俊不禁。</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon">🧠</div>
+            <h4>离谱中带合理</h4>
+            <p>先建立逻辑框架，再逐步走向荒诞。每一步都有道理，但结论完全离谱。</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon">🔥</div>
+            <h4>社交发疯</h4>
+            <p>用夸张戏剧化的表达，制造强烈反差。适合朋友圈和社交媒体传播。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-section">
+        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">创意灵感提示</h3>
+        <div class="tips-grid">
+          <div class="tip-card">
+            <div class="tip-icon">💡</div>
+            <h4>从生活出发</h4>
+            <p>最好的整活素材来自日常生活：上班、吃饭、睡觉、社交都可以成为灵感。</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon">🎯</div>
+            <h4>反差是关键</h4>
+            <p>越普通的场景 + 越正经的语气 = 越好的整活效果。反差越大，效果越好。</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon">🔄</div>
+            <h4>多试几次</h4>
+            <p>同样的输入，不同的风格会产出完全不同的效果。多尝试，找到最佳组合。</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon">🎭</div>
+            <h4>角色代入</h4>
+            <p>想象自己是某个角色（领导、专家、诗人），用他们的语气写离谱内容。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 页面4：我的创作 ===== -->
+  <div class="page" id="page-creations">
+    <div class="guide-container">
+      <div class="guide-section">
+        <h2 class="guide-section-title">
+          <span class="icon">💾</span>
+          我的创作
+        </h2>
+        <p style="color: rgba(255,255,255,0.5); margin-bottom: 24px;">管理你的历史记录和收藏夹</p>
+      </div>
+
+      <div class="creation-tabs">
+        <button class="creation-tab active" data-tab="history">历史记录</button>
+        <button class="creation-tab" data-tab="favorites">收藏夹</button>
+      </div>
+
+      <div class="creation-list" id="creationList">
+        <!-- 动态渲染 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 页面5：关于 ===== -->
+  <div class="page" id="page-about">
+    <div class="about-container">
+      <div class="about-hero">
+        <div class="about-hero-icon">✦</div>
+        <h2>AI 整活生成器</h2>
+        <p>把普通需求变成一本正经的胡说八道<br>AI 驱动的创意内容生成工具</p>
+      </div>
+
+      <div class="about-section">
+        <h3><span>🎯</span> 项目介绍</h3>
+        <p>AI 整活生成器是一个基于大语言模型的创意内容生成工具。它能够帮助用户将日常生活中的普通想法，通过 AI 的"一本正经胡说八道"能力，转化为有趣、离谱但看起来合理的文案内容。</p>
+        <p>无论是请假理由、朋友圈文案、海报宣传语还是短视频脚本，只要输入一句话，AI 就能为你生成完整的内容。适合用于娱乐、社交分享、创意启发等场景。</p>
+      </div>
+
+      <div class="about-section">
+        <h3><span>🛠️</span> 技术栈</h3>
+        <div class="tech-stack">
+          <div class="tech-item">
+            <div class="tech-item-icon">🌐</div>
+            <div class="tech-item-info">
+              <h4>纯前端架构</h4>
+              <p>单 HTML 文件，零依赖</p>
+            </div>
+          </div>
+          <div class="tech-item">
+            <div class="tech-item-icon">🎨</div>
+            <div class="tech-item-info">
+              <h4>CSS3 动画</h4>
+              <p>玻璃拟态 + 极光背景</p>
+            </div>
+          </div>
+          <div class="tech-item">
+            <div class="tech-item-icon">🤖</div>
+            <div class="tech-item-info">
+              <h4>智谱 AI API</h4>
+              <p>GLM-4-Flash 模型</p>
+            </div>
+          </div>
+          <div class="tech-item">
+            <div class="tech-item-icon">💾</div>
+            <div class="tech-item-info">
+              <h4>LocalStorage</h4>
+              <p>本地数据持久化</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-section">
+        <h3><span>✨</span> 核心功能</h3>
+        <div class="feature-list">
+          <div class="feature-item">
+            <div class="feature-item-icon">🎓</div>
+            <div>
+              <h4>四种整活风格</h4>
+              <p>一本正经胡说八道、假正经、离谱中带合理、社交发疯</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-item-icon">📱</div>
+            <div>
+              <h4>多场景输出</h4>
+              <p>报名帖、朋友圈、海报、短视频脚本等场景</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-item-icon">⚡</div>
+            <div>
+              <h4>实时 AI 生成</h4>
+              <p>调用 GLM-4-Flash 模型，快速生成创意内容</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-item-icon">💾</div>
+            <div>
+              <h4>本地存储</h4>
+              <p>历史记录和收藏夹自动保存到浏览器</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-item-icon">📋</div>
+            <div>
+              <h4>一键复制</h4>
+              <p>生成结果支持一键复制，直接粘贴使用</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-item-icon">🎲</div>
+            <div>
+              <h4>随机灵感</h4>
+              <p>内置示例库，一键随机切换创意方向</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-section" style="text-align: center; padding: 40px 0;">
+        <p style="color: rgba(255,255,255,0.4); font-size: 13px;">
+          Made with ✦ by TRAE Demo Team<br>
+          仅供娱乐学习使用
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 底部导航栏 ===== -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="nav-item active" data-page="home">
+      <span class="nav-icon">🏠</span>
+      <span>首页</span>
+    </button>
+    <button class="nav-item" data-page="gallery">
+      <span class="nav-icon">🎨</span>
+      <span>作品广场</span>
+    </button>
+    <button class="nav-item" data-page="guide">
+      <span class="nav-icon">📖</span>
+      <span>玩法指南</span>
+    </button>
+    <button class="nav-item" data-page="creations">
+      <span class="nav-icon">💾</span>
+      <span>我的创作</span>
+    </button>
+    <button class="nav-item" data-page="about">
+      <span class="nav-icon">ℹ️</span>
+      <span>关于</span>
+    </button>
+  </nav>
+
   <script>
-    // 配置
+    // ===== 进场动画：Canvas 粒子 =====
+    (function() {
+      var canvas = document.getElementById('introCanvas');
+      if (canvas) {
+        var ctx = canvas.getContext('2d');
+        var particles = [];
+        var animId = null;
+
+        function resizeCanvas() {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        function createParticles() {
+          particles = [];
+          var count = Math.min(80, Math.floor(window.innerWidth / 12));
+          for (var i = 0; i < count; i++) {
+            particles.push({
+              x: Math.random() * canvas.width,
+              y: Math.random() * canvas.height,
+              vx: (Math.random() - 0.5) * 0.3,
+              vy: -Math.random() * 0.5 - 0.1,
+              size: Math.random() * 2.5 + 0.5,
+              opacity: Math.random() * 0.5 + 0.1,
+              hue: Math.random() > 0.5 ? 160 : 200,
+              life: Math.random() * 100 + 50
+            });
+          }
+        }
+        createParticles();
+
+        function animateParticles() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          for (var i = 0; i < particles.length; i++) {
+            var p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life -= 0.3;
+            if (p.y < -10 || p.life <= 0) {
+              p.x = Math.random() * canvas.width;
+              p.y = canvas.height + 10;
+              p.life = Math.random() * 100 + 50;
+            }
+            var alpha = p.opacity * Math.min(1, p.life / 50);
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fillStyle = p.hue === 160 ? 'rgba(0,217,163,' + alpha + ')' : 'rgba(0,180,216,' + alpha + ')';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+            var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 3);
+            grad.addColorStop(0, p.hue === 160 ? 'rgba(0,217,163,' + (alpha * 0.3) + ')' : 'rgba(0,180,216,' + (alpha * 0.3) + ')');
+            grad.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = grad;
+            ctx.fill();
+          }
+          animId = requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        var introOverlay = document.getElementById('introOverlay');
+        var enterBtn = document.getElementById('introEnterBtn');
+        var appEl = document.getElementById('appContent');
+        var entered = false;
+
+        function enterApp() {
+          if (entered) return;
+          entered = true;
+          if (animId) cancelAnimationFrame(animId);
+          introOverlay.classList.add('dismissed');
+
+          setTimeout(function() {
+            appEl.classList.add('revealed');
+            var items = document.querySelectorAll('.stagger-item');
+            items.forEach(function(item, i) {
+              setTimeout(function() {
+                item.classList.add('revealed');
+              }, 100 + i * 120);
+            });
+          }, 600);
+        }
+
+        enterBtn.addEventListener('click', enterApp);
+      }
+    })();
+
+    // ===== SPA 路由 =====
+    const navItems = document.querySelectorAll('.nav-item');
+    const pageSections = document.querySelectorAll('.page');
+
+    function switchPage(targetPage) {
+      // Update nav
+      navItems.forEach(n => n.classList.remove('active'));
+      var activeNav = document.querySelector('.nav-item[data-page="' + targetPage + '"]');
+      if (activeNav) activeNav.classList.add('active');
+
+      // Hide all pages, show target
+      pageSections.forEach(p => {
+        p.classList.remove('active');
+        p.style.display = 'none';
+      });
+      var target = document.getElementById('page-' + targetPage);
+      if (target) {
+        target.classList.add('active');
+        target.style.display = 'block';
+      }
+
+      // Scroll to top
+      window.scrollTo(0, 0);
+
+      if (targetPage === 'creations') {
+        renderCreations();
+      }
+    }
+
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        switchPage(item.dataset.page);
+      });
+    });
+
+    // ===== 配置 =====
     const API_KEY = '5f721e4db9e14c94a9ceb803a8b8784f.mUQvV2XsrUERYOn2';
     const API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
     const MODEL = 'glm-4-flash';
     const USE_REAL_API = true;
 
-    // DOM
+    // ===== DOM =====
     const briefEl = document.getElementById('brief');
     const styleEl = document.getElementById('style');
     const sceneEl = document.getElementById('scene');
@@ -919,6 +2121,280 @@
       '短视频脚本': '短视频'
     };
 
+    // ===== 打字机效果 =====
+    function typeWriter(element, text, speed = 30) {
+      element.innerHTML = '';
+      let i = 0;
+      const cursor = document.createElement('span');
+      cursor.className = 'typewriter-cursor';
+
+      function type() {
+        if (i < text.length) {
+          const char = text.charAt(i);
+          if (char === '<') {
+            const endIndex = text.indexOf('>', i);
+            if (endIndex !== -1) {
+              element.innerHTML = text.substring(0, endIndex + 1);
+              i = endIndex + 1;
+            } else {
+              element.innerHTML += char;
+              i++;
+            }
+          } else {
+            element.innerHTML = text.substring(0, i + 1);
+            i++;
+          }
+          element.appendChild(cursor);
+          setTimeout(type, speed);
+        } else {
+          element.innerHTML = text;
+        }
+      }
+      type();
+    }
+
+    // ===== LocalStorage 工具 =====
+    const Storage = {
+      getHistory() {
+        try { return JSON.parse(localStorage.getItem('ai_zhenghuo_history') || '[]'); }
+        catch (e) { return []; }
+      },
+      saveHistory(item) {
+        const history = this.getHistory();
+        history.unshift({ ...item, id: Date.now(), timestamp: new Date().toLocaleString() });
+        if (history.length > 50) history.pop();
+        localStorage.setItem('ai_zhenghuo_history', JSON.stringify(history));
+      },
+      getFavorites() {
+        try { return JSON.parse(localStorage.getItem('ai_zhenghuo_favorites') || '[]'); }
+        catch (e) { return []; }
+      },
+      addFavorite(item) {
+        const favorites = this.getFavorites();
+        if (!favorites.find(f => f.id === item.id)) {
+          favorites.unshift(item);
+          localStorage.setItem('ai_zhenghuo_favorites', JSON.stringify(favorites));
+        }
+      },
+      removeFavorite(id) {
+        const favorites = this.getFavorites().filter(f => f.id !== id);
+        localStorage.setItem('ai_zhenghuo_favorites', JSON.stringify(favorites));
+      },
+      deleteHistory(id) {
+        const history = this.getHistory().filter(h => h.id !== id);
+        localStorage.setItem('ai_zhenghuo_history', JSON.stringify(history));
+      }
+    };
+
+    // ===== 作品广场数据 =====
+    const galleryData = [
+      {
+        id: 1,
+        author: '整活达人',
+        avatar: '🎭',
+        time: '2小时前',
+        style: '一本正经胡说八道',
+        title: '关于"战略性迟到"的学术研究报告',
+        content: '在本次「战略性迟到行为学」研究中，我们以「如何在迟到时保持优雅」为核心课题，进行了长达三个月的田野调查。研究发现，成功的战略性迟到需要具备三个要素：从容的步伐、专注的眼神，以及一句"刚才在讨论重要事宜"。',
+        tags: ['迟到', '学术风', '一本正经'],
+        likes: 128,
+        liked: false
+      },
+      {
+        id: 2,
+        author: '朋友圈文案师',
+        avatar: '📱',
+        time: '5小时前',
+        style: '社交发疯',
+        title: '今天喝了一杯奶茶，感觉人生已经到达了巅峰',
+        content: '啊啊啊啊啊！！！这杯奶茶也太好喝了吧！！！珍珠Q弹！！！奶盖绵密！！！我宣布这就是我的灵魂伴侣！！！不结婚很难收场！！！#奶茶续命 #人生巅峰 #今天也是美好的一天',
+        tags: ['奶茶', '发疯文学', '朋友圈'],
+        likes: 256,
+        liked: false
+      },
+      {
+        id: 3,
+        author: '公文写作AI',
+        avatar: '📋',
+        time: '1天前',
+        style: '假正经',
+        title: '关于申请"不工作也能拿钱"的可行性报告',
+        content: '尊敬的领导：鉴于当前经济形势与个人发展需求，本人特此提交《关于实施"带薪发呆"制度的建议书》。经研究，该制度可显著提升员工幸福感，降低离职率，预计ROI高达300%。',
+        tags: ['请假', '公文', '搞笑'],
+        likes: 89,
+        liked: false
+      },
+      {
+        id: 4,
+        author: '逻辑鬼才',
+        avatar: '🧠',
+        time: '2天前',
+        style: '离谱中带合理',
+        title: '论证：为什么吃泡面等于吃满汉全席',
+        content: '首先，泡面含有面粉（主食）、调料包（配菜）、脱水蔬菜（时蔬），营养结构完整。其次，泡面需要热水冲泡，与满汉全席的"热菜"属性一致。最后，两者都能让人吃饱。因此，泡面 = 简化版满汉全席。',
+        tags: ['泡面', '逻辑', '美食'],
+        likes: 167,
+        liked: false
+      },
+      {
+        id: 5,
+        author: '短视频编剧',
+        avatar: '🎬',
+        time: '3天前',
+        style: '假正经',
+        title: '【教程】如何用领导语气点外卖',
+        content: '各位同事，关于午餐采购事宜，经班子研究决定：本次点外卖工作要本着"好吃不贵、营养均衡"的原则，严格落实"先领券再下单"的工作要求，确保在12点前完成配送验收。',
+        tags: ['外卖', '领导', '短视频'],
+        likes: 342,
+        liked: false
+      },
+      {
+        id: 6,
+        author: '报名帖专家',
+        avatar: '📝',
+        time: '4天前',
+        style: '一本正经胡说八道',
+        title: '报名"全国发呆大赛"的个人陈述',
+        content: '本人拥有二十年发呆经验，曾创下连续三小时盯着天花板不动的个人纪录。在发呆领域，我具备发呆时保持呼吸、偶尔眨眼、以及完美控制口水的专业技能。我相信，这次比赛我一定能"什么都不做"地赢得冠军。',
+        tags: ['发呆', '报名帖', '比赛'],
+        likes: 215,
+        liked: false
+      }
+    ];
+
+    // ===== 渲染作品广场 =====
+    function renderGallery() {
+      const grid = document.getElementById('galleryGrid');
+      if (!grid) return;
+
+      grid.innerHTML = galleryData.map(item => `
+        <div class="gallery-card" data-id="${item.id}">
+          <div class="gallery-card-header">
+            <div class="gallery-card-avatar">${item.avatar}</div>
+            <div class="gallery-card-meta">
+              <div class="gallery-card-author">${item.author}</div>
+              <div class="gallery-card-time">${item.time}</div>
+            </div>
+            <span class="gallery-card-style">${item.style}</span>
+          </div>
+          <div class="gallery-card-title">${item.title}</div>
+          <div class="gallery-card-content">${item.content}</div>
+          <div class="gallery-card-footer">
+            <div class="gallery-card-tags">
+              ${item.tags.map(t => `<span class="gallery-card-tag">${t}</span>`).join('')}
+            </div>
+            <div class="gallery-card-actions">
+              <button class="gallery-card-action ${item.liked ? 'liked' : ''}" onclick="toggleLike(${item.id})">
+                <span>${item.liked ? '❤️' : '🤍'}</span>
+                <span>${item.likes}</span>
+              </button>
+              <button class="gallery-card-action" onclick="copyGalleryItem(${item.id})">
+                <span>📋</span>
+                <span>复制</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleLike(id) {
+      const item = galleryData.find(g => g.id === id);
+      if (item) {
+        item.liked = !item.liked;
+        item.likes += item.liked ? 1 : -1;
+        renderGallery();
+        showToast(item.liked ? '❤️ 已点赞' : '💔 取消点赞');
+      }
+    }
+
+    function copyGalleryItem(id) {
+      const item = galleryData.find(g => g.id === id);
+      if (item) {
+        navigator.clipboard.writeText(item.title + '\n\n' + item.content).then(() => {
+          showToast('✓ 已复制到剪贴板');
+        });
+      }
+    }
+
+    // ===== 渲染我的创作 =====
+    let currentTab = 'history';
+
+    function renderCreations() {
+      const list = document.getElementById('creationList');
+      if (!list) return;
+
+      const data = currentTab === 'history' ? Storage.getHistory() : Storage.getFavorites();
+
+      if (data.length === 0) {
+        list.innerHTML = `
+          <div class="creation-empty">
+            <div class="creation-empty-icon">${currentTab === 'history' ? '📝' : '⭐'}</div>
+            <p>暂无${currentTab === 'history' ? '历史记录' : '收藏内容'}</p>
+            <p style="font-size: 13px; margin-top: 8px;">去首页生成一些内容吧~</p>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = data.map(item => `
+        <div class="creation-item">
+          <div class="creation-item-header">
+            <div class="creation-item-title">${item.title || '无标题'}</div>
+            <div class="creation-item-time">${item.timestamp || ''}</div>
+          </div>
+          <div class="creation-item-content">${item.content || ''}</div>
+          <div class="creation-item-footer">
+            <div class="creation-item-tags">
+              ${(item.tags || []).map(t => `<span class="creation-item-tag">${t}</span>`).join('')}
+              <span class="creation-item-tag">${item.style || ''}</span>
+              <span class="creation-item-tag">${item.scene || ''}</span>
+            </div>
+            <div class="creation-item-actions">
+              <button class="creation-item-btn" onclick="copyCreationItem(${item.id})">复制</button>
+              ${currentTab === 'history'
+                ? `<button class="creation-item-btn" onclick="deleteCreationItem(${item.id})">删除</button>`
+                : `<button class="creation-item-btn" onclick="removeFavoriteItem(${item.id})">取消收藏</button>`
+              }
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function copyCreationItem(id) {
+      const data = currentTab === 'history' ? Storage.getHistory() : Storage.getFavorites();
+      const item = data.find(d => d.id === id);
+      if (item) {
+        navigator.clipboard.writeText((item.title || '') + '\n\n' + (item.content || '')).then(() => {
+          showToast('✓ 已复制到剪贴板');
+        });
+      }
+    }
+
+    function deleteCreationItem(id) {
+      Storage.deleteHistory(id);
+      renderCreations();
+      showToast('🗑️ 已删除');
+    }
+
+    function removeFavoriteItem(id) {
+      Storage.removeFavorite(id);
+      renderCreations();
+      showToast('⭐ 已取消收藏');
+    }
+
+    // 创作页标签切换
+    document.querySelectorAll('.creation-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.creation-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentTab = tab.dataset.tab;
+        renderCreations();
+      });
+    });
+
+    // ===== 核心功能 =====
     function updateCounter() {
       charCountEl.textContent = briefEl.value.length;
     }
@@ -996,35 +2472,67 @@ TAGS: [标签1, 标签2, 标签3]`;
       }
     }
 
+    function extractKeywords(brief) {
+      return brief.replace(/[，。？！,.?!]/g, ' ').trim().split(/\s+/).slice(0, 6).join(' ');
+    }
+
+    function generateTags(keywords, style, scene) {
+      const baseTags = keywords.split(/\s+/).slice(0, 2);
+      return [...baseTags, style, scene.replace('文案', '').replace('宣传语', '')].filter(Boolean);
+    }
+
+    function generateNonsense(brief, keywords, sceneLabel) {
+      return `在本次「${keywords}研究项目」中，我们以「${brief}」为核心课题，进行了深度探索与实践。<br><br>
+通过对${keywords}相关理论的系统梳理与 AI 离谱思维的创造性结合，我们提出了一套全新的${sceneLabel}生成模型。<br><br>
+该模型不仅考虑了目标受众的心理承受能力，还兼顾了内容创作者的表现欲，最终生成了一系列合理中带着离谱、离谱中透着真诚的${sceneLabel}内容。`;
+    }
+
+    function generateFormal(brief, keywords, sceneLabel) {
+      return `关于${keywords}的${sceneLabel}方案<br><br>
+一、背景分析<br>
+经研究决定，现就${brief}事宜提出如下方案。<br><br>
+二、具体措施<br>
+1. 建立${keywords}专项工作组；<br>
+2. 制定${sceneLabel}标准化流程；<br>
+3. 落实${keywords}质量管控体系。<br><br>
+三、预期效果<br>
+通过本方案的实施，预计将实现${keywords}效率提升300%，满意度达到离谱水平。`;
+    }
+
+    function generateAbsurd(brief, keywords, sceneLabel) {
+      return `很多人不理解${brief}，但其实这背后有着深刻的逻辑。<br><br>
+首先，从物理学角度看，${keywords}符合能量守恒定律；其次，从心理学角度分析，这满足了人类的自我实现需求；最后，从社会学视角审视，这是时代发展的必然趋势。<br><br>
+因此，我们可以得出一个看似离谱但逻辑严密的结论：${brief}，其实是人类文明的下一个里程碑。`;
+    }
+
+    function generateCrazy(brief, keywords, sceneLabel) {
+      return `啊啊啊啊啊！！！谁懂啊！！！${brief}这件事真的绝了！！！<br><br>
+我直接就是一个大动作！！！${keywords}安排上！！！这${sceneLabel}发出去不得炸翻全场？？？<br><br>
+家人们谁懂这种感觉啊！！！我已经开始期待大家的反应了！！！这波操作直接封神！！！`;
+    }
+
     function generateMockContent(brief, style, scene) {
+      const keywords = extractKeywords(brief);
       const sceneLabel = sceneMap[scene];
       const styleData = styleMap[style];
 
       const titles = [
-        `当"<span class="highlight">${brief.slice(0, 12)}</span>"遇上 AI 整活：一份${sceneLabel}创作报告`,
-        `【${sceneLabel}预警】当"${brief.slice(0, 10)}"遇上 AI 整活`,
-        `震惊！有人把"${brief.slice(0, 10)}"写成了${sceneLabel}，效果离谱`,
+        `当"<span class="highlight">${keywords}</span>"遇上 AI 整活`,
+        `【${sceneLabel}预警】${keywords}的离谱玩法`,
+        `震惊！有人把"${keywords}"写成了${sceneLabel}`,
         `如何用"${styleData.tone}"写${sceneLabel}？AI 给出了离谱答案`
       ];
       const title = titles[Math.floor(Math.random() * titles.length)];
 
       const contents = {
-        '一本正经胡说八道': `在本次「${brief.slice(0, 10)}创作研究」项目中，我们以「如何让${brief.slice(0, 10)}显得合理又离谱」为核心课题，进行了深度探索与实践。<br><br>
-        通过对人类${brief.slice(0, 8)}心理的分析与 AI 离谱思维的结合，我们提出了一套全新的${brief.slice(0, 8)}生成模型。<br><br>
-        该模型不仅考虑了受众的心理承受能力，还兼顾了创作者的演技水平，最终生成了一系列合理中带着离谱、离谱中透着真诚的${brief.slice(0, 8)}。`,
-        '假正经': `关于${brief.slice(0, 10)}的${sceneLabel}文案方案：采用公文式结构，先陈述背景，再提出"解决方案"，最后以看似合理的结论收尾。<br><br>
-        全程保持冷静客观的叙述语调，让读者在细品之后发现其中的荒诞逻辑。<br><br>
-        经系统分析，该${brief.slice(0, 8)}在${sceneLabel}场景下具备完整的逻辑框架与严肃语气，同时内含适度荒诞元素。`,
-        '离谱中带合理': `"${brief}"这个需求，初看平平无奇。但当我们用${sceneLabel}的视角重新审视，会发现其中隐藏着大量可以被"合理夸张"的空间。<br><br>
-        不是硬搞笑，而是让逻辑自己走到荒诞的尽头。<br><br>
-        AI 经过深度思考后认为：这件事表面上很普通，但如果用${sceneLabel}的形式表达，可以加入一些"听起来很有道理但仔细想想完全不对"的细节。`,
-        '社交发疯': `家人们谁懂啊！！！"${brief}"这种需求 AI 居然真的接了！！！而且生成的${sceneLabel}文案离谱到让我笑出腹肌！！！<br><br>
-        救命🆘 我只是随便说了"${brief}"，AI 就给我整了个${sceneLabel}，看完我直接原地升天！！！<br><br>
-        这也太会整活了吧！！！快艾特你的冤种朋友来看！！！`
+        '一本正经胡说八道': generateNonsense(brief, keywords, sceneLabel),
+        '假正经': generateFormal(brief, keywords, sceneLabel),
+        '离谱中带合理': generateAbsurd(brief, keywords, sceneLabel),
+        '社交发疯': generateCrazy(brief, keywords, sceneLabel)
       };
 
       const content = contents[style];
-      const tags = [sceneLabel, style, '离谱', '搞笑'];
+      const tags = generateTags(keywords, style, scene);
 
       return { title, content, tags };
     }
@@ -1054,6 +2562,19 @@ TAGS: [标签1, 标签2, 标签3]`;
         `<span class="tag-item ${i === 0 ? 'active' : ''}">${tag}</span>`
       ).join('');
 
+      // 打字机效果输出正文
+      typeWriter(copyTextEl, result.content, 15);
+
+      // 保存到历史记录
+      Storage.saveHistory({
+        title: result.title.replace(/<[^>]*>/g, ''),
+        content: result.content.replace(/<br>/g, '\n').replace(/<[^>]*>/g, ''),
+        tags: result.tags,
+        style,
+        scene,
+        brief
+      });
+
       hideLoading();
     }
 
@@ -1064,7 +2585,7 @@ TAGS: [标签1, 标签2, 标签3]`;
       sceneEl.value = sample.scene;
       updateCounter();
       generate();
-      showToast('🎲 换了一个灵感');
+      showToast('换了一个灵感');
     }
 
     async function copyResult() {
@@ -1076,13 +2597,13 @@ TAGS: [标签1, 标签2, 标签3]`;
 
       try {
         await navigator.clipboard.writeText(text);
-        showToast('✓ 已复制到剪贴板');
+        showToast('已复制到剪贴板');
       } catch {
         showToast('复制失败，请手动复制');
       }
     }
 
-    // 事件
+    // ===== 事件绑定 =====
     document.getElementById('generate').addEventListener('click', generate);
     document.getElementById('randomize').addEventListener('click', randomize);
     document.getElementById('copy').addEventListener('click', copyResult);
@@ -1103,7 +2624,6 @@ TAGS: [标签1, 标签2, 标签3]`;
       }
     });
 
-    // 标签点击
     document.getElementById('tagsContainer').addEventListener('click', (e) => {
       if (e.target.classList.contains('tag-item')) {
         document.querySelectorAll('.tag-item').forEach(t => t.classList.remove('active'));
@@ -1111,9 +2631,10 @@ TAGS: [标签1, 标签2, 标签3]`;
       }
     });
 
-    // 初始化
+    // ===== 初始化 =====
     updateCounter();
     generate();
+    renderGallery();
   </script>
 </body>
 </html>

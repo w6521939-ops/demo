@@ -132,9 +132,7 @@
       position: relative;
       z-index: 1;
       width: 100%;
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 40px 48px;
+      padding: 32px 5vw;
       animation: fadeIn 0.4s ease;
     }
 
@@ -1076,7 +1074,7 @@
 
     /* ===== 玩法指南 ===== */
     .guide-container {
-      max-width: 900px;
+      max-width: 100%;
       margin: 0 auto;
     }
 
@@ -1334,7 +1332,7 @@
 
     /* ===== 关于页面 ===== */
     .about-container {
-      max-width: 800px;
+      max-width: 100%;
       margin: 0 auto;
     }
 
@@ -1509,13 +1507,12 @@
     @media (max-width: 1024px) {
       .container {
         grid-template-columns: 1fr;
-        max-width: 900px;
       }
       .steps-grid {
         grid-template-columns: repeat(3, 1fr);
       }
       .page {
-        padding: 32px;
+        padding: 24px 4vw;
       }
     }
 

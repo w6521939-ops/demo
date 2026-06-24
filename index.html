@@ -930,7 +930,7 @@
     /* ===== 作品广场 ===== */
     .gallery-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 20px;
       margin-top: 24px;
     }
@@ -1214,8 +1214,8 @@
     }
 
     .creation-list {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 16px;
     }
 
@@ -2614,46 +2614,59 @@
 
     async function callAIAPI(brief, style, scene) {
       if (!USE_REAL_API) {
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await new Promise(resolve => setTimeout(resolve, 800));
         return null;
       }
 
+      const systemPrompt = `你是一个天才搞笑文案大师，专精"一本正经地胡说八道"。
+你的文案有三个特点：
+1. 表面上极其正式、专业、有理有据
+2. 实际上内容完全离谱、荒谬、不靠谱
+3. 读者看完会笑出声，但又不得不承认"好像有道理"
+
+绝对禁止：
+- 写"尊敬的XX"这种正经公文开头
+- 写"哈哈哈""笑死"这种自说自笑
+- 内容真的正经靠谱（那就不好笑了）
+- 用"社会责任""企业精神""文明素质"等空洞套话
+
+你必须：让内容本身就好笑，不是靠说"这很好笑"来搞笑。`;
+
       const styleHints = {
-        '一本正经胡说八道': '用学术论文、官方文件、研究报告的语气和格式，把完全不靠谱的内容写得极其严肃和专业。多用"研究表明""数据显示""经过深入分析"等学术词汇，引用不存在的数据、虚构的专家名言、编造的研究方法，让读者一开始以为是真的，仔细一看才发现全是胡说八道。要有反差萌。',
-        '假正经': '用领导讲话、企业公文、官方声明的口吻，把鸡毛蒜皮的小事上升到战略高度。多用"高度重视""深刻认识""全面推进""统筹协调"等官话套话，把日常小事包装成重大决策。',
-        '离谱中带合理': '内容看似荒谬离谱，但逻辑上竟然能自圆其说。用一本正经的语气讲述完全不合理的事情，让读者觉得"好像有道理但又哪里不对"。要有意想不到的转折。',
-        '社交发疯': '用夸张、抓马、情绪化的网络语言风格，充满感叹号、反问句、emoji。语气要像朋友圈深夜emo或微博热搜第一的发言，又疯又好笑。'
+        '一本正经胡说八道': '模仿学术论文/研究报告的格式，但研究课题完全荒谬。比如用"实验数据表明""经过300次对照实验"来论证"为什么周一不应该存在"。引用虚构的哈佛研究、编造的诺贝尔奖得主名言。',
+        '假正经': '模仿领导讲话/企业公文，但内容是鸡毛蒜皮的小事。比如用"关于全面推进午睡制度的指导意见""经研究决定，将奶茶列为战略物资"这种格式。',
+        '离谱中带合理': '提出一个荒谬的观点，然后用看似严密的逻辑论证它。比如"论证：不吃早饭等于省钱等于赚钱等于致富"，每一步都"有道理"但整体荒谬。',
+        '社交发疯': '用朋友圈深夜emo/微博热搜的语气，夸张、抓马、情绪过载。比如"家人们谁懂啊！！！我今天发现了一个惊天秘密！！！"这种风格。'
       };
 
       const sceneHints = {
-        '报名帖补充': '生成一段自我介绍/参赛宣言式的文案，要让人觉得"这人认真的吗？"',
-        '朋友圈文案': '生成一条适合发朋友圈的短文案，要有配文感和互动性，让人忍不住点赞评论',
-        '海报宣传语': '生成海报上的主标题+副标题+宣传语，要有广告感但内容离谱',
-        '短视频脚本': '生成一个30秒短视频的口播脚本，要有开场hook、正文和结尾call to action'
+        '报名帖补充': '写一段参赛自我介绍/宣言，要让人觉得"这人是不是认真的？"',
+        '朋友圈文案': '写一条发朋友圈的文案，要有配文感，让人想点赞',
+        '海报宣传语': '写海报标题+副标题+宣传语，有广告感但内容离谱',
+        '短视频脚本': '写30秒短视频口播脚本，有hook、正文、结尾'
       };
 
-      const prompt = `你是一个顶级搞笑文案大师，你的绝活是"一本正经地胡说八道"。
+      const userPrompt = `【风格】${styleHints[style] || style}
+【场景】${sceneHints[scene] || scene}
+【用户想整的活】${brief}
 
-【风格要求】：${styleHints[style] || style}
-【场景要求】：${sceneHints[scene] || scene}
-【用户输入】：${brief}
+请生成（中文）：
+1. 标题：要有反差感，让人想点进来看
+2. 正文（200-400字）：
+   - 严格按"${style}"风格写
+   - 必须有至少2个笑点（反转/荒谬逻辑/夸张比喻/意外关联）
+   - 用<br>换行，<strong>加粗搞笑的部分</strong>
+3. 2-3个标签
 
-请生成以下内容（用中文）：
-1. 一个让人笑出声的标题（要有反差感或悬念感）
-2. 一段完整的正文内容（200-500字），要求：
-   - 严格按照"${style}"的风格
-   - 适配"${scene}"的使用场景
-   - 必须搞笑！要有至少2个让人笑出来的点（反转、荒谬逻辑、夸张比喻、意想不到的关联等）
-   - 用 HTML 标签（<br>换行，<strong>加粗重点搞笑部分</strong>）
-   - 不要写"哈哈哈"或"笑死"这种自说自笑的话，让内容本身好笑
-3. 2-4个有趣的标签
-
-请按以下格式返回：
+格式：
 TITLE: [标题]
-CONTENT: [正文内容]
-TAGS: [标签1, 标签2, 标签3]`;
+CONTENT: [正文]
+TAGS: [标签1, 标签2]`;
 
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+
         const response = await fetch(API_URL, {
           method: 'POST',
           headers: {
@@ -2662,11 +2675,17 @@ TAGS: [标签1, 标签2, 标签3]`;
           },
           body: JSON.stringify({
             model: MODEL,
-            messages: [{ role: 'user', content: prompt }],
-            temperature: 1.2,
-            max_tokens: 1000
-          })
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userPrompt }
+            ],
+            temperature: 1.3,
+            max_tokens: 800
+          }),
+          signal: controller.signal
         });
+
+        clearTimeout(timeoutId);
 
         if (!response.ok) throw new Error('API 调用失败');
 

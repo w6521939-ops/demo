@@ -2721,33 +2721,38 @@ TAGS: [标签1, 标签2]`;
     }
 
     function generateNonsense(brief, keywords, sceneLabel) {
-      return `在本次「${keywords}研究项目」中，我们以「${brief}」为核心课题，进行了深度探索与实践。<br><br>
-通过对${keywords}相关理论的系统梳理与 AI 离谱思维的创造性结合，我们提出了一套全新的${sceneLabel}生成模型。<br><br>
-该模型不仅考虑了目标受众的心理承受能力，还兼顾了内容创作者的表现欲，最终生成了一系列合理中带着离谱、离谱中透着真诚的${sceneLabel}内容。`;
+      return `尊敬的领导：<br><br>根据《职场生存基本法》第七章第三条，本人因以下不可抗力需请假一天：<br><br><strong>${keywords}这件事</strong>，已经到了不处理不行的地步。具体情况如下：<br><br>今早出门时，我家猫用一种"你确定要去上班？"的眼神看了我三秒。作为负责任的铲屎官，我必须留下来进行心理疏导。<br><br>另外，我的仙人掌已经两天没跟我说话了，我怀疑它是不是抑郁了。<br><br>${brief}这件事，真的不能再等了。<br><br>保证请假期间随时可联系（虽然我可能不会接）。<br><br>此致<br>一个认真负责的员工`;
     }
 
     function generateFormal(brief, keywords, sceneLabel) {
-      return `关于${keywords}的${sceneLabel}方案<br><br>
-一、背景分析<br>
-经研究决定，现就${brief}事宜提出如下方案。<br><br>
-二、具体措施<br>
-1. 建立${keywords}专项工作组；<br>
-2. 制定${sceneLabel}标准化流程；<br>
-3. 落实${keywords}质量管控体系。<br><br>
-三、预期效果<br>
-通过本方案的实施，预计将实现${keywords}效率提升300%，满意度达到离谱水平。`;
+      return `关于${keywords}的紧急通知<br><br>
+各相关部门：<br><br>
+经研究决定，现就${brief}事宜通知如下：<br><br>
+一、<strong>将${keywords}列为本月核心战略任务</strong>，优先级高于一切（包括开会）。<br><br>
+二、成立${keywords}专项工作组，由本人担任组长（因为只有我在乎这件事）。<br><br>
+三、各部门需在三个工作日内提交${keywords}落实方案，格式不限，但必须好笑。<br><br>
+四、拒不执行者，罚抄《如何让老板开心》100遍。<br><br>
+特此通知。`;
     }
 
     function generateAbsurd(brief, keywords, sceneLabel) {
-      return `很多人不理解${brief}，但其实这背后有着深刻的逻辑。<br><br>
-首先，从物理学角度看，${keywords}符合能量守恒定律；其次，从心理学角度分析，这满足了人类的自我实现需求；最后，从社会学视角审视，这是时代发展的必然趋势。<br><br>
-因此，我们可以得出一个看似离谱但逻辑严密的结论：${brief}，其实是人类文明的下一个里程碑。`;
+      return `很多人不理解${brief}，但其实这背后有着严密的逻辑：<br><br>
+第一步：${keywords} = 解决一个问题<br>
+第二步：解决问题 = 产生价值<br>
+第三步：产生价值 = 获得认可<br>
+第四步：获得认可 = 升职加薪<br>
+第五步：升职加薪 = 走向人生巅峰<br><br>
+所以，<strong>${keywords} = 走向人生巅峰</strong>。<br><br>
+这个逻辑没毛病吧？每一步都成立，但串起来就是觉得哪里不对。这就是${brief}的哲学意义。`;
     }
 
     function generateCrazy(brief, keywords, sceneLabel) {
-      return `啊啊啊啊啊！！！谁懂啊！！！${brief}这件事真的绝了！！！<br><br>
-我直接就是一个大动作！！！${keywords}安排上！！！这${sceneLabel}发出去不得炸翻全场？？？<br><br>
-家人们谁懂这种感觉啊！！！我已经开始期待大家的反应了！！！这波操作直接封神！！！`;
+      return `啊啊啊啊啊！！！家人们谁懂啊！！！<br><br>
+${brief}这件事我真的憋不住了！！！<br><br>
+我直接就是一个大动作！！！<strong>${keywords}</strong>安排上！！！<br><br>
+这${sceneLabel}发出去不得炸翻全场？？？我已经能想象到大家的表情了哈哈哈哈（不是）。<br><br>
+不说了不说了，懂的都懂，不懂的说了也不懂。这波操作直接封神！！！<br><br>
+PS：如果有人问起，就说是AI写的，跟我没关系。`;
     }
 
     function generateMockContent(brief, style, scene) {
@@ -2756,10 +2761,10 @@ TAGS: [标签1, 标签2]`;
       const styleData = styleMap[style];
 
       const titles = [
-        `当"<span class="highlight">${keywords}</span>"遇上 AI 整活`,
-        `【${sceneLabel}预警】${keywords}的离谱玩法`,
-        `震惊！有人把"${keywords}"写成了${sceneLabel}`,
-        `如何用"${styleData.tone}"写${sceneLabel}？AI 给出了离谱答案`
+        `关于${keywords}的紧急申请`,
+        `震惊！${keywords}竟然...`,
+        `${keywords}这件事，我必须说清楚`,
+        `一份关于${keywords}的严肃声明`
       ];
       const title = titles[Math.floor(Math.random() * titles.length)];
 
